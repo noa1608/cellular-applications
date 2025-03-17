@@ -1,12 +1,18 @@
 package com.example.travel.repository
 
+import androidx.lifecycle.LiveData
 import com.example.travel.data.Post
 import com.example.travel.data.PostDao
 
 class PostRepository(private val postDao: PostDao) {
 
-    suspend fun insertPost(post: Post) {
-        postDao.insertPost(post)
+    suspend fun insertPost(post: Post): Boolean {
+        try {
+            postDao.insertPost(post)
+            return true
+        } catch (e: Exception) {
+            return false
+        }
     }
 
     suspend fun updatePost(post: Post) {
@@ -17,7 +23,7 @@ class PostRepository(private val postDao: PostDao) {
         postDao.deletePost(post)
     }
 
-    suspend fun getAllPosts(): List<Post> {
+    fun getAllPosts(): LiveData<List<Post>> {
         return postDao.getAllPosts()
     }
 
