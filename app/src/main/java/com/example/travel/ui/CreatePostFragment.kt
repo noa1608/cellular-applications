@@ -81,55 +81,42 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
             // Validate inputs
             if (title.isEmpty() || description.isEmpty()) {
-                Toast.makeText(
-                    requireContext(),
-                    "Title and description cannot be empty",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Title and description cannot be empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             // Check if an image is selected
             if (imageUri == null) {
-                Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             // Save the image to shared directory (internal or external storage)
+            val imagePath = saveImageToSharedDirectory(imageUri!!, requireContext())
 
-            lifecycleScope.launch(Dispatchers.IO) {
-                // Save the image to shared directory (internal or external storage)
-                val imagePath = saveImageToSharedDirectory(imageUri!!, requireContext())
+            // If saving the image failed, show an error
+            if (imagePath == null) {
+                Toast.makeText(requireContext(), "Failed to save image", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                // If saving the image failed, show an error
-                if (imagePath == null) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "Failed to save image", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                    return@launch
-                }
+            // Create a Post object
+            val newPost = Post(
+                title = title,
+                content = description,
+                imagePath = imagePath,
+                owner = "current_user"
+            )
+            Log.d("CreatePostFragment", "Saving post: Title: $title, Description: $description, ImagePath: $imagePath")
+            // Save the post using ViewModel
+            postViewModel.insertPost(newPost)
 
-                // Create a Post object
-                val newPost = Post(
-                    title = title,
-                    content = description,
-                    imagePath = imagePath,  // Store the actual file path
-                    owner = "current_user"  // Replace with actual logged-in user info if needed
-                )
-                Log.d("CreatePostFragment", "Saving post: Title: $title, Description: $description, ImagePath: $imagePath")
-
-                // Save the post using ViewModel
-                postViewModel.insertPost(newPost)
-                postViewModel.getAllPosts().observe(viewLifecycleOwner) { posts ->
-                    val savedPost = posts.find { it.title == title }
-                    if (savedPost != null) {
-                        Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
-                        requireActivity().onBackPressedDispatcher.onBackPressed()  // Optionally navigate back
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to save post", Toast.LENGTH_SHORT).show()
-                    }
+            // Observe the result from ViewModel
+            postViewModel.postInsertResult.observe(viewLifecycleOwner) { success ->
+                if (success) {
+                    Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Failed to save post", Toast.LENGTH_SHORT).show()
                 }
             }
         }
