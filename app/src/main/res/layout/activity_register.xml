@@ -9,19 +9,31 @@
     <EditText
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:hint="Email" />
+
+    <EditText
+        android:id="@+id/usernameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:hint="Username" />
 
     <EditText
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="68dp"
         android:hint="Password"
         android:inputType="textPassword" />
 
     <Button
+        android:id="@+id/selectProfileImageButton"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:text="Select Profile Image" />
+
+    <Button
         android:id="@+id/registerButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="63dp"
         android:text="Register" />
 </LinearLayout>

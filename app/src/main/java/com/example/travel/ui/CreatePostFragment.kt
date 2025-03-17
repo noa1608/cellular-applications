@@ -21,7 +21,7 @@ import com.example.travel.repository.PostRepository
 import com.example.travel.data.AppDatabase
 import com.example.travel.viewmodel.PostViewModel
 import com.example.travel.viewmodel.PostViewModelFactory
-import com.example.travel.utils.saveImageToSharedDirectory
+import com.example.travel.utils.savePostImageToDirectory
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -41,16 +41,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                 imageView.setImageURI(it)
             }
         }
-    private val getResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data
-                uri?.let {
-                    imageUri = it
-                    imageView.setImageURI(it) // Display selected image
-                }
-            }
-        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,19 +52,16 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         postViewModel.getAllPosts().observe(viewLifecycleOwner) { posts ->
             Log.d("CreatePostFragment", "All Posts: $posts")
         }
-        // Get UI references
         val postTitle = view.findViewById<EditText>(R.id.et_post_title)
         val postDescription = view.findViewById<EditText>(R.id.et_post_description)
         val saveButton = view.findViewById<Button>(R.id.btn_save_post)
         val selectImageButton = view.findViewById<Button>(R.id.btn_select_image)
         imageView = view.findViewById(R.id.iv_post_image)
 
-        // Open gallery to select an image
         selectImageButton.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
 
-        // Save post when the save button is clicked
         saveButton.setOnClickListener {
             val title = postTitle.text.toString().trim()
             val description = postDescription.text.toString().trim()
@@ -91,10 +78,8 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                 return@setOnClickListener
             }
 
-            // Save the image to shared directory (internal or external storage)
-            val imagePath = saveImageToSharedDirectory(imageUri!!, requireContext())
+            val imagePath = savePostImageToDirectory(imageUri!!, requireContext())
 
-            // If saving the image failed, show an error
             if (imagePath == null) {
                 Toast.makeText(requireContext(), "Failed to save image", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
