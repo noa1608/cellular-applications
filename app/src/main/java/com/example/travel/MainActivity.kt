@@ -2,40 +2,29 @@ package com.example.travel
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.travel.ui.theme.TravelTheme
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
 import com.example.travel.auth.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.example.travel.R
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if the user is authenticated with Firebase
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
+            // If no user is authenticated, navigate to the LoginActivity
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         } else {
             setContentView(R.layout.activity_main)
+
+            // Set up NavHostFragment for navigation
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            val navController = navHostFragment.navController
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TravelTheme {
-        Greeting("Android")
     }
 }

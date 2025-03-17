@@ -1,5 +1,6 @@
 package com.example.travel.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -20,7 +21,7 @@ interface PostDao {
     suspend fun deletePost(post: Post)
 
     @Query("SELECT * FROM posts ORDER BY id DESC")
-    suspend fun getAllPosts(): List<Post>
+    fun getAllPosts(): LiveData<List<Post>>
 
     @Query("SELECT * FROM posts WHERE owner = :owner ORDER BY id DESC")
     suspend fun getUserPosts(owner: String): List<Post>
