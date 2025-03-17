@@ -24,6 +24,7 @@ import com.example.travel.viewmodel.PostViewModelFactory
 import com.example.travel.utils.savePostImageToDirectory
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.firebase.auth.FirebaseAuth
+import androidx.navigation.fragment.findNavController
 
 
 class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
@@ -100,6 +101,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             postViewModel.postInsertResult.observe(viewLifecycleOwner) { success ->
                 if (success) {
                     Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.profileFragment)
                 } else {
                     Toast.makeText(requireContext(), "Failed to save post", Toast.LENGTH_SHORT).show()
                 }

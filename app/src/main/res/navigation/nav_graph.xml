@@ -10,4 +10,9 @@
         android:name="com.example.travel.ui.CreatePostFragment"
         android:label="Create Post"
         tools:layout="@layout/fragment_create_post" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.travel.ui.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

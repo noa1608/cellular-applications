@@ -1,4 +1,4 @@
-package com.example.travel.ui.viewmodel
+package com.example.travel.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
