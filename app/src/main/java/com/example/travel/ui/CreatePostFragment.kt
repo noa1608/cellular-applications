@@ -23,10 +23,8 @@ import com.example.travel.viewmodel.PostViewModel
 import com.example.travel.viewmodel.PostViewModelFactory
 import com.example.travel.utils.savePostImageToDirectory
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.google.firebase.auth.FirebaseAuth
+
 
 class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
@@ -65,6 +63,8 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         saveButton.setOnClickListener {
             val title = postTitle.text.toString().trim()
             val description = postDescription.text.toString().trim()
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val owner = currentUser?.email ?: "unknown_user"
 
             // Validate inputs
             if (title.isEmpty() || description.isEmpty()) {
@@ -90,7 +90,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                 title = title,
                 content = description,
                 imagePath = imagePath,
-                owner = "current_user"
+                owner = owner
             )
             Log.d("CreatePostFragment", "Saving post: Title: $title, Description: $description, ImagePath: $imagePath")
             // Save the post using ViewModel
