@@ -1,25 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="4dp">
+    android:background="@drawable/post_item_background"
+    android:layout_margin="4dp"
+    android:elevation="4dp">
 
+    <!-- Image container -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"> <!-- Fixed height for the image -->
+
+        <ImageView
+            android:id="@+id/iv_post_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true" />
+    </FrameLayout>
+
+    <!-- Title below the image -->
     <TextView
         android:id="@+id/tv_post_title"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
-        android:paddingBottom="4dp"
+        android:padding="8dp"
+        android:text="Post Title"
+        android:textAlignment="center"
         android:textSize="14sp"
         android:textStyle="bold" />
-
-    <ImageView
-        android:id="@+id/iv_post_image"
-        android:layout_width="match_parent"
-        android:layout_height="154dp"
-        android:background="?attr/selectableItemBackground"
-        android:scaleType="centerCrop" />
 </LinearLayout>

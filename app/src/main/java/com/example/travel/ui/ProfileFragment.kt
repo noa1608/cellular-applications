@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.travel.R
 import com.example.travel.data.AppDatabase
 import com.example.travel.repository.PostRepository
@@ -17,6 +18,7 @@ import com.example.travel.viewmodel.PostViewModel
 import com.example.travel.viewmodel.PostViewModelFactory
 import com.example.travel.viewmodel.UserViewModel
 import com.example.travel.viewmodel.UserViewModelFactory
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -28,6 +30,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rv_user_posts)
+        val layoutManager = GridLayoutManager(requireContext(), 2)
+        recyclerView.layoutManager = layoutManager
 
         auth = FirebaseAuth.getInstance()
         val userEmail = auth.currentUser?.email ?: ""
@@ -46,20 +52,25 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         val tvUsername = view.findViewById<TextView>(R.id.tv_username)
         val tvEmail = view.findViewById<TextView>(R.id.tv_email)
-        val rvUserPosts = view.findViewById<RecyclerView>(R.id.rv_user_posts)
+        val profileImage = view.findViewById<ShapeableImageView>(R.id.profile_image)
 
-        // Get User details
+
         userViewModel.viewModelScope.launch {
             val user = userViewModel.getUserByEmail(userEmail)
             user?.let {
                 tvUsername.text = it.username
                 tvEmail.text = it.email
 
-                // Get posts only for this user
+                it.profilePictureUrl?.let { path ->
+                    Glide.with(this@ProfileFragment)
+                        .load(path)
+                        .circleCrop()
+                        .into(profileImage)
+                }
                 postViewModel.getAllPosts().observe(viewLifecycleOwner) { allPosts ->
                     val userPosts = allPosts.filter { post -> post.owner == userEmail }
-                    rvUserPosts.layoutManager = GridLayoutManager(requireContext(), 3)
-                    rvUserPosts.adapter = ProfilePostAdapter(userPosts)
+                    recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+                    recyclerView.adapter = ProfilePostAdapter(userPosts)
                 }
             }
         }
