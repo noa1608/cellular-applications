@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "posts")
 data class Post(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val title: String,
-    val content: String,
+    @PrimaryKey val id: String = "",
+    val title: String = "",
+    val content: String ="",
     val imagePath: String,
     val owner: String
 )

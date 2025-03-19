@@ -17,11 +17,16 @@ import com.example.travel.viewmodel.UserViewModel
 import com.example.travel.viewmodel.UserViewModelFactory
 import com.example.travel.utils.saveProfileImageToDirectory
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var userViewModel: UserViewModel
+    private lateinit var firestore: FirebaseFirestore
     private var imageUri: Uri? = null
 
     private val pickImageLauncher =
@@ -40,7 +45,9 @@ class RegisterActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         // Initialize UserViewModel with Factory
-        val userRepository = UserRepository(AppDatabase.getDatabase(this).userDao())
+        val userRepository = UserRepository(
+            AppDatabase.getDatabase(this).userDao(),
+            firestore)
         val userViewModelFactory = UserViewModelFactory(userRepository)
         userViewModel = ViewModelProvider(this, userViewModelFactory)[UserViewModel::class.java]
 
@@ -83,13 +90,15 @@ class RegisterActivity : AppCompatActivity() {
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        // Save user to Room DB
+                        val userId = auth.currentUser?.uid ?: ""
                         val user = User(
+                            id = userId,
                             email = email,
                             username = username,
-                            profilePictureUrl = profileImagePath
+                            profilePicture = profileImagePath
                         )
-                        userViewModel.insertUser(user)
+                        userViewModel.insertUserToRoom(user)
+                        userViewModel.saveUserToFirestore(user)
                         android.util.Log.d("RegisterActivity", "User saved to Room DB: $user")
 
                         Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
