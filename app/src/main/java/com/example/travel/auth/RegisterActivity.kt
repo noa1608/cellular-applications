@@ -13,8 +13,8 @@ import com.example.travel.R
 import com.example.travel.data.AppDatabase
 import com.example.travel.data.User
 import com.example.travel.repository.UserRepository
-import com.example.travel.ui.viewmodel.UserViewModel
-import com.example.travel.ui.viewmodel.UserViewModelFactory
+import com.example.travel.viewmodel.UserViewModel
+import com.example.travel.viewmodel.UserViewModelFactory
 import com.example.travel.utils.saveProfileImageToDirectory
 import com.google.firebase.auth.FirebaseAuth
 
