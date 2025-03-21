@@ -16,6 +16,8 @@ import com.example.travel.viewmodel.PostViewModel
 import com.example.travel.viewmodel.PostViewModelFactory
 import com.example.travel.repository.PostRepository
 import com.example.travel.data.AppDatabase
+import com.example.travel.data.CloudinaryModel
+import com.example.travel.data.firebase.FirebaseService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -32,20 +34,15 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize ViewModel
+        val firebaseService = FirebaseService()
+        val cloudinaryModel = CloudinaryModel()
         val postDao = AppDatabase.getDatabase(requireContext()).postDao()
-        val postRepository = PostRepository(postDao)
-        val postViewModelFactory = PostViewModelFactory(postRepository)
+        val postRepository = PostRepository(postDao,firebaseService)
+        val postViewModelFactory = PostViewModelFactory(postRepository, cloudinaryModel)
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
 
         // Get the postId from arguments
-        val postId = arguments?.getLong("postId") ?: -1  // Default to -1 if not found
-
-        if (postId == -1L) {
-            Toast.makeText(requireContext(), "Invalid post ID", Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp()
-            return
-        }
+        val postId = arguments?.getString("postId")?:""
 
         // Set up UI elements
         postTitleTextView = view.findViewById(R.id.tv_post_title)
@@ -84,7 +81,7 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
                 }
 
                 editButton.setOnClickListener {
-                    val bundle = Bundle().apply { putLong("postId", postId) }
+                    val bundle = Bundle().apply { putString("postId", postId) }
                     findNavController().navigate(R.id.action_singlePostFragment_to_editPostFragment, bundle)
                 }
 
@@ -98,7 +95,7 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
         }
     }
 
-    private fun deletePost(postId: Long) {
+    private fun deletePost(postId: String) {
         postViewModel.deletePost(postId)
         Toast.makeText(requireContext(), "Post deleted", Toast.LENGTH_SHORT).show()
         findNavController().navigateUp()

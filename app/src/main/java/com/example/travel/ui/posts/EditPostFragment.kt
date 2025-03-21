@@ -15,9 +15,10 @@ import com.example.travel.data.Post
 import com.example.travel.repository.PostRepository
 import com.example.travel.viewmodel.PostViewModel
 import com.example.travel.viewmodel.PostViewModelFactory
-import com.example.travel.utils.saveImageToSharedDirectory
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
+import com.example.travel.data.CloudinaryModel
+import com.example.travel.data.firebase.FirebaseService
 
 class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
 
@@ -29,7 +30,7 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
     private lateinit var selectImageButton: Button
     private lateinit var imageView: ImageView
 
-    private var postId: Long = -1
+    private var postId: String = ""
     private var originalImagePath: String? = null
     private var originalOwner: String? = null
 
@@ -44,10 +45,12 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        postId = arguments?.getLong("postId") ?: -1
+        postId = arguments?.getString("postId") ?: ""
+        val firebaseService = FirebaseService()
+        val cloudinaryModel = CloudinaryModel()
         val postDao = AppDatabase.getDatabase(requireContext()).postDao()
-        val postRepository = PostRepository(postDao)
-        val postViewModelFactory = PostViewModelFactory(postRepository)
+        val postRepository = PostRepository(postDao, firebaseService)
+        val postViewModelFactory = PostViewModelFactory(postRepository, cloudinaryModel)
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
 
         postTitleEditText = view.findViewById(R.id.et_post_title)
@@ -90,9 +93,7 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
             }
 
             // Use the existing image path if no new image is selected
-            val finalImagePath = imageUri?.let {
-                saveImageToSharedDirectory(it, requireContext())
-            } ?: originalImagePath // Keep the original image path if no new image is selected
+            val finalImagePath = imageUri?.toString() ?: originalImagePath
 
             // Use the original owner if it hasn't changed
             val finalOwner = originalOwner ?: "" // If owner is not null, retain original owner

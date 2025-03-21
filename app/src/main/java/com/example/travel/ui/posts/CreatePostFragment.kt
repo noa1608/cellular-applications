@@ -17,14 +17,19 @@ import com.example.travel.repository.PostRepository
 import com.example.travel.data.AppDatabase
 import com.example.travel.viewmodel.PostViewModel
 import com.example.travel.viewmodel.PostViewModelFactory
-import com.example.travel.utils.saveImageToSharedDirectory
+import com.example.travel.utils.savePostImageToDirectory
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import androidx.navigation.fragment.findNavController
+import com.example.travel.data.CloudinaryModel
+import com.example.travel.data.firebase.FirebaseService
+
 
 class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
-    private var imageUri: Uri? = null  // Nullable to avoid crashes
+    val firebaseService = FirebaseService()
+    val cloudinaryModel = CloudinaryModel()
+    private var imageUri: Uri? = null
     private lateinit var postViewModel: PostViewModel
     private lateinit var imageView: ImageView
     private val pickImageLauncher =
@@ -34,33 +39,20 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                 imageView.setImageURI(it)
             }
         }
-    private val getResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data
-                uri?.let {
-                    imageUri = it
-                    imageView.setImageURI(it) // Display selected image
-                }
-            }
-        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
-        val postDao = AppDatabase.getDatabase(requireContext()).postDao()
-        val postRepository = PostRepository(postDao)
-        val postViewModelFactory = PostViewModelFactory(postRepository)
-        postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
 
-        // Get UI references
+        val postDao = AppDatabase.getDatabase(requireContext()).postDao()
+        val postRepository = PostRepository(postDao, firebaseService)
+        val postViewModelFactory = PostViewModelFactory(postRepository, cloudinaryModel)
+        postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
         val postTitle = view.findViewById<EditText>(R.id.et_post_title)
         val postDescription = view.findViewById<EditText>(R.id.et_post_description)
         val saveButton = view.findViewById<Button>(R.id.btn_save_post)
         val selectImageButton = view.findViewById<Button>(R.id.btn_select_image)
         imageView = view.findViewById(R.id.iv_post_image)
 
-        // Open gallery to select an image
         selectImageButton.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -69,6 +61,8 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         saveButton.setOnClickListener {
             val title = postTitle.text.toString().trim()
             val description = postDescription.text.toString().trim()
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            val owner = currentUser?.email ?: "unknown_user"
 
             // Validate inputs
             if (title.isEmpty() || description.isEmpty()) {
@@ -82,8 +76,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                 return@setOnClickListener
             }
 
-            // Save the image to shared directory (internal or external storage)
-            val imagePath = saveImageToSharedDirectory(imageUri!!, requireContext())
+            val imagePath = savePostImageToDirectory(imageUri!!, requireContext())
 
             // If saving the image failed, show an error
             if (imagePath == null) {
@@ -96,25 +89,21 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                 title = title,
                 content = description,
                 imagePath = imagePath,
-                owner = currentUserId
+                owner = owner
             )
             Log.d("CreatePostFragment", "Saving post: Title: $title, Description: $description, ImagePath: $imagePath")
             // Save the post using ViewModel
-            postViewModel.insertPost(newPost)
 
-            // Observe the result from ViewModel
-            postViewModel.postInsertResult.observe(viewLifecycleOwner) { newPostId ->
-                if (newPostId > 0) { // ✅ Check if a valid ID is returned
-                    Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
 
-                    val bundle = Bundle().apply {
-                        putLong("postId", newPostId) // ✅ Pass the correct post ID
-                    }
-                    findNavController().navigate(R.id.singlePostFragment, bundle)
-                } else {
-                    Toast.makeText(requireContext(), "Failed to save post", Toast.LENGTH_SHORT).show()
+            postViewModel.createPostWithImage(requireContext(), newPost, imageUri!!, { postId ->
+                Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
+                val bundle = Bundle().apply {
+                    putString("postId", postId) // ✅ Pass the correct post ID
                 }
-            }
+                findNavController().navigate(R.id.singlePostFragment, bundle)
+            }, { error ->
+                Toast.makeText(requireContext(), "Failed to save post: $error", Toast.LENGTH_SHORT).show()
+            })
         }
     }
 }

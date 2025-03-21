@@ -1,31 +1,55 @@
 package com.example.travel.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.travel.data.Post
 import com.example.travel.data.PostDao
+import com.example.travel.data.User
+import com.example.travel.data.firebase.FirebaseService
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PostRepository(private val postDao: PostDao) {
+class PostRepository(private val postDao: PostDao,private val firebaseService: FirebaseService) {
 
-    suspend fun insertPost(post: Post): Int  {
-        try {
-            postDao.insertPost(post)
-            val postId: Long = postDao.insertPost(post)
-            return postId.toInt()
-        } catch (e: Exception) {
-            return 0
+
+    fun savePostToFirebase(post: Post, onComplete: (String?) -> Unit) {
+        firebaseService.savePost(post) { postId ->
+            onComplete(postId)
         }
     }
 
-    suspend fun updatePost(post: Post): Boolean {
-        val result = postDao.updatePost(post)
-        return result > 0
+    suspend fun insertPost(post: Post): String? {
+        postDao.insertPost(post)
+        return post.id
     }
 
-    suspend fun deletePostById(postId: Long) {
+    fun createPost(post: Post) {
+        firebaseService.savePost(post) { postId ->
+            if (postId != null) {
+                firebaseService.syncPostFromFirestore(postId) { syncedPost ->
+                    syncedPost?.let {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            postDao.insertPost(it)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    suspend fun updatePost(post: Post): Boolean {
+        return try {
+            postDao.updatePost(post)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+
+    suspend fun deletePostById(postId: String) {
         postDao.deletePost(postId)
     }
 
@@ -37,7 +61,7 @@ class PostRepository(private val postDao: PostDao) {
         return postDao.getUserPosts(owner)
     }
 
-    suspend fun getPostById(postId: Long): Post? {
+    suspend fun getPostById(postId: String): Post? {
         return postDao.getPostById(postId)
     }
 

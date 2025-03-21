@@ -4,9 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.travel.ui.auth.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.example.travel.R
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity() {
             // Set up NavHostFragment for navigation
             val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
             val navController = navHostFragment.navController
+            val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+            bottomNav.setupWithNavController(navController)
         }
     }
 }

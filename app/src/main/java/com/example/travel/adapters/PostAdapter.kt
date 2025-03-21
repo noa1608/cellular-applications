@@ -11,7 +11,7 @@ import com.example.travel.R
 import com.example.travel.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
 
-class PostAdapter(private val onPostClick: (Long) -> Unit) :
+class PostAdapter(private val onPostClick: (String) -> Unit) :
     RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     private val postList = mutableListOf<Post>()
@@ -42,7 +42,7 @@ class PostAdapter(private val onPostClick: (Long) -> Unit) :
         private val imageView: ImageView = itemView.findViewById(R.id.iv_post_image)
         private val authorTextView: TextView = itemView.findViewById(R.id.tv_post_author)
 
-        fun bind(post: Post, onPostClick: (Long) -> Unit, userNameCache: MutableMap<String, String>) {
+        fun bind(post: Post, onPostClick: (String) -> Unit, userNameCache: MutableMap<String, String>) {
             titleTextView.text = post.title
             contentTextView.text = post.content
             authorTextView.text = post.owner

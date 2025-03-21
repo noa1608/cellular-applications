@@ -18,7 +18,7 @@ interface PostDao {
     suspend fun updatePost(post: Post): Int
 
     @Query("DELETE FROM posts WHERE id = :postId")
-    suspend fun deletePost(postId: Long)
+    suspend fun deletePost(postId: String)
 
     @Query("SELECT * FROM posts ORDER BY id DESC")
     fun getAllPosts(): LiveData<List<Post>>
@@ -27,7 +27,7 @@ interface PostDao {
     suspend fun getUserPosts(owner: String): List<Post>
 
     @Query("SELECT * FROM posts WHERE id = :postId LIMIT 1")
-    suspend fun getPostById(postId: Long): Post?
+    suspend fun getPostById(postId: String): Post?
 
 
 }

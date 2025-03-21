@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.travel.R
 import com.example.travel.adapter.PostAdapter
 import com.example.travel.data.AppDatabase
+import com.example.travel.data.CloudinaryModel
+import com.example.travel.data.firebase.FirebaseService
 import com.example.travel.repository.PostRepository
 import com.example.travel.ui.posts.SinglePostFragment
 import com.example.travel.viewmodel.PostViewModel
@@ -27,11 +29,11 @@ class AllPostsFragment : Fragment(R.layout.fragment_all_posts) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-
-        // Initialize ViewModel
+        val firebaseService = FirebaseService()
+        val cloudinaryModel = CloudinaryModel()
         val postDao = AppDatabase.getDatabase(requireContext()).postDao()
-        val postRepository = PostRepository(postDao)
-        val postViewModelFactory = PostViewModelFactory(postRepository)
+        val postRepository = PostRepository(postDao, firebaseService)
+        val postViewModelFactory = PostViewModelFactory(postRepository, cloudinaryModel)
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
 
         Log.d("SinglePostScreen", "Logged-in User ID: $currentUserId")
@@ -53,9 +55,9 @@ class AllPostsFragment : Fragment(R.layout.fragment_all_posts) {
         }
     }
 
-    private fun navigateToSinglePost(postId: Long) {
+    private fun navigateToSinglePost(postId: String) {
         val bundle = Bundle().apply {
-            putLong("postId", postId)
+            putString("postId", postId)
         }
 
         // Use NavController to navigate
