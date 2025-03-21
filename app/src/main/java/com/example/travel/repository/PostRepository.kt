@@ -1,26 +1,31 @@
 package com.example.travel.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.travel.data.Post
 import com.example.travel.data.PostDao
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PostRepository(private val postDao: PostDao) {
 
-    suspend fun insertPost(post: Post): Boolean {
+    suspend fun insertPost(post: Post): Int  {
         try {
             postDao.insertPost(post)
-            return true
+            val postId: Long = postDao.insertPost(post)
+            return postId.toInt()
         } catch (e: Exception) {
-            return false
+            return 0
         }
     }
 
-    suspend fun updatePost(post: Post) {
-        postDao.updatePost(post)
+    suspend fun updatePost(postId: Long, title: String, content: String) {
+        postDao.updatePost(postId, title, content)
     }
 
-    suspend fun deletePost(post: Post) {
-        postDao.deletePost(post)
+    suspend fun deletePostById(postId: Long) {
+        postDao.deletePost(postId)
     }
 
     fun getAllPosts(): LiveData<List<Post>> {
@@ -31,7 +36,7 @@ class PostRepository(private val postDao: PostDao) {
         return postDao.getUserPosts(owner)
     }
 
-    suspend fun getPostById(postId: Int): Post? {
+    suspend fun getPostById(postId: Long): Post? {
         return postDao.getPostById(postId)
     }
 }

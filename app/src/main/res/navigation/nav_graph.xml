@@ -3,11 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/createPostFragment">
+    app:startDestination="@id/allPostsFragment">
 
     <fragment
         android:id="@+id/createPostFragment"
-        android:name="com.example.travel.ui.CreatePostFragment"
+        android:name="com.example.travel.ui.posts.CreatePostFragment"
         android:label="Create Post"
         tools:layout="@layout/fragment_create_post" />
+    <fragment
+        android:id="@+id/singlePostFragment"
+        android:name="com.example.travel.ui.posts.SinglePostFragment"
+        android:label="Show single post"
+        tools:layout="@layout/post_fragment" >
+    <action
+        android:id="@+id/action_singlePostFragment_to_editPostFragment"
+        app:destination="@id/editPostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="com.example.travel.ui.posts.EditPostFragment"
+        android:label="Edit Post"
+        tools:layout="@layout/fragment_edit_post" />
+
+    <fragment
+        android:id="@+id/allPostsFragment"
+        android:name="com.example.travel.ui.posts.AllPostsFragment"
+        android:label="All Posts"
+        tools:layout="@layout/fragment_all_posts">
+        <action
+            android:id="@+id/action_allPostsFragment_to_singlePostFragment"
+            app:destination="@id/singlePostFragment" />
+    </fragment>
+
 </navigation>
