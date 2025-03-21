@@ -1,20 +1,46 @@
 package com.example.travel.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.travel.data.Post
 import com.example.travel.data.PostDao
+import com.example.travel.data.User
+import com.example.travel.data.firebase.FirebaseService
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class PostRepository(private val postDao: PostDao) {
+class PostRepository(private val postDao: PostDao,private val firebaseService: FirebaseService) {
 
-    suspend fun insertPost(post: Post): Boolean {
-        try {
-            postDao.insertPost(post)
-            return true
-        } catch (e: Exception) {
-            return false
+
+    fun savePostToFirebase(post: Post, onComplete: (String?) -> Unit) {
+        firebaseService.savePost(post) { postId ->
+            onComplete(postId)  // Return the generated post ID
         }
     }
 
+    fun insertPost(post: Post): String? {
+        try {
+            postDao.insertPost(post)
+            return post.id
+        } catch (e: Exception) {
+            return null
+        }
+    }
+    fun createPost(post: Post) {
+        firebaseService.savePost(post) { postId ->
+            if (postId != null) {
+                firebaseService.syncPostFromFirestore(postId) { syncedPost ->
+                    syncedPost?.let {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            postDao.insertPost(it)
+                        }
+                    }
+                }
+            }
+        }
+    }
     suspend fun updatePost(post: Post) {
         postDao.updatePost(post)
     }

@@ -10,7 +10,19 @@ activityCompose = "1.10.1"
 composeBom = "2024.04.01"
 appcompat = "1.6.1"
 firebaseBom = "33.10.0"
-
+androidx-fragment-ktx = "1.6.2"
+navigationFragmentKtxVersion = "2.8.9"
+constraintlayout = "2.2.1"
+navigationUiKtxVersion = "2.8.9"
+ksp = "2.0.0-1.0.21"
+media3CommonKtx = "1.5.1"
+glide = "4.15.0"
+glideCompiler = "4.15.0"
+firebaseStorageKtx = "21.0.1"
+cloudinary = "3.0.2"
+navigation = "2.7.7"
+playServicesCastTv = "21.1.1"
+okhttp = "4.9.2"
 
 
 [libraries]
@@ -33,10 +45,31 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment-ktx" }
+androidx-navigation-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtxVersion" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "androidx-fragment-ktx" }
+androidx_navigation_ui_ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtxVersion" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version = "2.5.2" }
+androidx-room-common = { group = "androidx.room", name = "room-common", version = "2.5.2" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version = "2.5.2" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version = "2.5.2" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
+androidx-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide"}
+androidx-glideCompiler = { module = "com.github.bumptech.glide:compiler", version.ref ="glideCompiler"}
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
+cloudinary = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinary" }
+navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "navigation" }
+navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigation" }
+play-services-cast-tv = { group = "com.google.android.gms", name = "play-services-cast-tv", version.ref = "playServicesCastTv" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version = "2.9.0" }
+logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
+gson = { module = "com.google.code.gson:gson", version = "2.8.8" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 

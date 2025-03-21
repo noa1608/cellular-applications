@@ -1,36 +1,40 @@
 package com.example.travel.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.travel.data.User
 import com.example.travel.repository.UserRepository
 import kotlinx.coroutines.launch
+import android.net.Uri
+import androidx.lifecycle.MutableLiveData
 
-class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
-    fun insertUser(user: User) {
+class UserViewModel(private val repository: UserRepository) : ViewModel() {
+
+    private val _createUserStatus = MutableLiveData<Result<Unit>>()
+    val createUserStatus: LiveData<Result<Unit>> = _createUserStatus
+
+    fun createUser(user: User) {
         viewModelScope.launch {
-            userRepository.insertUser(user)
+            try {
+                repository.saveUserToFirestore(user)
+                repository.syncUserFromFirestore(user.id)
+                _createUserStatus.postValue(Result.success(Unit))
+            } catch (e: Exception) {
+                _createUserStatus.postValue(Result.failure(e))
+            }
         }
     }
-
-    fun updateUser(user: User) {
-        viewModelScope.launch {
-            userRepository.updateUser(user)
-        }
+    fun syncUser(userId: String) {
+        repository.syncUserFromFirestore(userId)
     }
 
-    fun deleteUser(user: User) {
-        viewModelScope.launch {
-            userRepository.deleteUser(user)
-        }
+    fun getUserById(userId: String) = viewModelScope.launch {
+        val user = repository.getUserById(userId)
     }
-
-    suspend fun getUserById(userId: String): User? {
-        return userRepository.getUserById(userId)
-    }
-
-    suspend fun getUserByEmail(email: String): User? {
-        return userRepository.getUserByEmail(email)
+    fun getUserByEmail(email: String): LiveData<User?> {
+        return repository.getUserByEmail(email)
     }
 }

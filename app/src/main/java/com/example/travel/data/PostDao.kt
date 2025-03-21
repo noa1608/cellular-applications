@@ -12,7 +12,7 @@ import androidx.room.Delete
 interface PostDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPost(post: Post)
+    fun insertPost(post: Post)
 
     @Update
     suspend fun updatePost(post: Post)

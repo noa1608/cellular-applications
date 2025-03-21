@@ -25,11 +25,15 @@ import com.example.travel.utils.savePostImageToDirectory
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.firebase.auth.FirebaseAuth
 import androidx.navigation.fragment.findNavController
+import com.example.travel.data.CloudinaryModel
+import com.example.travel.data.firebase.FirebaseService
 
 
 class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
-    private var imageUri: Uri? = null  // Nullable to avoid crashes
+    val firebaseService = FirebaseService()
+    val cloudinaryModel = CloudinaryModel()
+    private var imageUri: Uri? = null
     private lateinit var postViewModel: PostViewModel
     private lateinit var imageView: ImageView
 
@@ -45,8 +49,8 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         super.onViewCreated(view, savedInstanceState)
 
         val postDao = AppDatabase.getDatabase(requireContext()).postDao()
-        val postRepository = PostRepository(postDao)
-        val postViewModelFactory = PostViewModelFactory(postRepository)
+        val postRepository = PostRepository(postDao, firebaseService)
+        val postViewModelFactory = PostViewModelFactory(postRepository, cloudinaryModel)
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
         postViewModel.getAllPosts().observe(viewLifecycleOwner) { posts ->
             Log.d("CreatePostFragment", "All Posts: $posts")
@@ -95,17 +99,14 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             )
             Log.d("CreatePostFragment", "Saving post: Title: $title, Description: $description, ImagePath: $imagePath")
             // Save the post using ViewModel
-            postViewModel.insertPost(newPost)
 
             // Observe the result from ViewModel
-            postViewModel.postInsertResult.observe(viewLifecycleOwner) { success ->
-                if (success) {
-                    Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.profileFragment)
-                } else {
-                    Toast.makeText(requireContext(), "Failed to save post", Toast.LENGTH_SHORT).show()
-                }
-            }
+            postViewModel.createPostWithImage(requireContext(), newPost, imageUri!!, { postId ->
+                Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.profileFragment)
+            }, { error ->
+                Toast.makeText(requireContext(), "Failed to save post: $error", Toast.LENGTH_SHORT).show()
+            })
         }
     }
 }
