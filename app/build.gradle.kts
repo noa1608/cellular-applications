@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.play.services.cast.tv)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -87,4 +88,5 @@ dependencies {
     implementation(libs.cloudinary)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.okhttp)
 }

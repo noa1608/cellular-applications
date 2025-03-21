@@ -32,11 +32,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import com.example.travel.auth.LoginActivity
+import com.example.travel.data.CloudinaryModel
+import com.example.travel.data.firebase.FirebaseService
+
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var postViewModel: PostViewModel
     private lateinit var auth: FirebaseAuth
+    val firebaseService = FirebaseService()
+    val cloudinaryModel = CloudinaryModel()
 
     private lateinit var profileImage: ImageView
 
@@ -57,12 +62,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         userViewModel = ViewModelProvider(
             this,
-            UserViewModelFactory(UserRepository(db.userDao(), FirebaseFirestore.getInstance(), FirebaseStorage.getInstance()))
+            UserViewModelFactory(UserRepository(db.userDao(), FirebaseFirestore.getInstance()))
         )[UserViewModel::class.java]
 
         postViewModel = ViewModelProvider(
             this,
-            PostViewModelFactory(PostRepository(db.postDao()))
+            PostViewModelFactory(PostRepository(db.postDao(),firebaseService ), cloudinaryModel)
         )[PostViewModel::class.java]
 
         // Fetch user info from Room (synced with Firestore)

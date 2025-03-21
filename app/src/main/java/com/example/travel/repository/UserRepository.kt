@@ -16,7 +16,6 @@ import kotlinx.coroutines.tasks.await
 class UserRepository(
     private val userDao: UserDao,
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
 ) {
 
     fun syncUserFromFirestore(userId: String) {

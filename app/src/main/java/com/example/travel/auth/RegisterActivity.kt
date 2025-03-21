@@ -62,13 +62,12 @@ class RegisterActivity : AppCompatActivity() {
         // Initialize Firebase instances
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-        storage = FirebaseStorage.getInstance()
         cloudinaryModel = CloudinaryModel()
 
         // Initialize ViewModel
         val userRepository = UserRepository(
             AppDatabase.getDatabase(this).userDao(),
-            firestore, storage
+            firestore
         )
         val userViewModelFactory = UserViewModelFactory(userRepository)
         userViewModel = ViewModelProvider(this, userViewModelFactory)[UserViewModel::class.java]

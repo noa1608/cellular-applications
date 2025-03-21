@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "posts")
 data class Post(
-    @PrimaryKey val id: String = "",
+    @PrimaryKey var id: String = "",
     val title: String = "",
     val content: String ="",
     val imagePath: String,
