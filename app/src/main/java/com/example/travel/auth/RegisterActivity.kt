@@ -132,13 +132,18 @@ class RegisterActivity : AppCompatActivity() {
                                             profilePicture = imageUrl
                                         )
 
-                                        userViewModel.saveUserToFirestore(user)
-                                        userViewModel.insertUserToRoom(user)
-
-                                        Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
-
-                                        startActivity(Intent(this, LoginActivity::class.java))
-                                        finish()
+                                        userViewModel.createUser(user)
+                                        userViewModel.createUserStatus.observe(this) { result ->
+                                            result.onSuccess {
+                                                // User created & synced successfully
+                                                Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
+                                                startActivity(Intent(this, LoginActivity::class.java))
+                                                finish()                                            }
+                                            result.onFailure { error ->
+                                                // Handle error
+                                                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
                                     } else {
                                         Log.e("Cloudinary", "Image upload failed: No image URL")
                                         Toast.makeText(this, "Image upload failed", Toast.LENGTH_SHORT).show()

@@ -8,24 +8,27 @@ import com.example.travel.data.User
 import com.example.travel.repository.UserRepository
 import kotlinx.coroutines.launch
 import android.net.Uri
+import androidx.lifecycle.MutableLiveData
 
 
 class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
+    private val _createUserStatus = MutableLiveData<Result<Unit>>()
+    val createUserStatus: LiveData<Result<Unit>> = _createUserStatus
+
+    fun createUser(user: User) {
+        viewModelScope.launch {
+            try {
+                repository.saveUserToFirestore(user)
+                repository.syncUserFromFirestore(user.id)
+                _createUserStatus.postValue(Result.success(Unit))
+            } catch (e: Exception) {
+                _createUserStatus.postValue(Result.failure(e))
+            }
+        }
+    }
     fun syncUser(userId: String) {
         repository.syncUserFromFirestore(userId)
-    }
-
-    fun saveUserToFirestore(user: User) {
-        viewModelScope.launch {
-            repository.saveUserToFirestore(user)
-        }
-    }
-
-    fun insertUserToRoom(user: User) {
-        viewModelScope.launch {
-            repository.insertUserToRoom(user)
-        }
     }
 
     fun getUserById(userId: String) = viewModelScope.launch {
@@ -33,13 +36,5 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     }
     fun getUserByEmail(email: String): LiveData<User?> {
         return repository.getUserByEmail(email)
-    }
-    fun syncUserWithFirestore(userId: String) {
-        viewModelScope.launch {
-            repository.syncUserFromFirestore(userId)
-        }
-    }
-    suspend fun uploadProfilePicture(uri: Uri): String? {
-        return repository.uploadProfilePicture(uri)
     }
 }

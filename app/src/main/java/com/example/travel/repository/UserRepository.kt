@@ -26,7 +26,7 @@ class UserRepository(
                     val user = document.toObject(User::class.java)
                     user?.let {
                         CoroutineScope(Dispatchers.IO).launch {
-                            userDao.insertUser(it) // Save to Room
+                            userDao.insertUser(it)
                         }
                     }
                 }
@@ -40,29 +40,11 @@ class UserRepository(
             Log.e("UserRepository", "Failed to save user to Firestore", e)
         }
     }
-
-    suspend fun insertUserToRoom(user: User) {
-        userDao.insertUser(user)
-    }
     suspend fun getUserById(userId: String): User? {
         return userDao.getUserById(userId)
     }
     fun getUserByEmail(email: String): LiveData<User?> {
         return userDao.getUserByEmail(email)
-    }
-    suspend fun uploadProfilePicture(uri: Uri): String? {
-        val storageRef = storage.reference
-        val profilePicRef = storageRef.child("profile_pictures/${UUID.randomUUID()}.jpg")
-
-        try {
-            val uploadTask = profilePicRef.putFile(uri).await() // Upload the image
-            val downloadUrl = uploadTask.storage.downloadUrl.await() // Get the download URL
-            return downloadUrl.toString() // Return the download URL
-        } catch (e: Exception) {
-            // Handle upload failure
-            Log.e("UserRepository", "Failed to upload profile picture", e)
-            return null
-        }
     }
 }
 
