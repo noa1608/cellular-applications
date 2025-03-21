@@ -27,6 +27,14 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:paddingBottom="8dp" />
+    <TextView
+        android:id="@+id/tv_post_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author: Unknown"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginTop="8dp"/>
 
     <!-- Content of the Post -->
     <TextView

@@ -30,6 +30,8 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
     private lateinit var imageView: ImageView
 
     private var postId: Long = -1
+    private var originalImagePath: String? = null
+    private var originalOwner: String? = null
 
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -60,6 +62,8 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
             post?.let {
                 postTitleEditText.setText(it.title)
                 postContentEditText.setText(it.content)
+                originalImagePath = it.imagePath // Save the original image path
+                originalOwner = it.owner // Save the original owner
                 imageUri = Uri.parse(it.imagePath) // Assuming imagePath is stored as a URI
                 imageView.setImageURI(imageUri) // Display the current image
             } ?: run {
@@ -85,21 +89,21 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
                 return@setOnClickListener
             }
 
-            // Save the updated image to the shared directory (if a new image was selected)
-            val imagePath = imageUri?.let {
+            // Use the existing image path if no new image is selected
+            val finalImagePath = imageUri?.let {
                 saveImageToSharedDirectory(it, requireContext())
-            }
+            } ?: originalImagePath // Keep the original image path if no new image is selected
 
-            // If no image is selected, pass an empty string as imagePath
-            val finalImagePath = imagePath ?: ""
+            // Use the original owner if it hasn't changed
+            val finalOwner = originalOwner ?: "" // If owner is not null, retain original owner
 
             // Create a Post object with updated data
             val updatedPost = Post(
                 id = postId,  // Use existing post ID
                 title = updatedTitle,
                 content = updatedContent,
-                imagePath = finalImagePath,
-                owner = ""  // Assuming the owner is not needed or can be updated later
+                imagePath = finalImagePath ?: "",
+                owner = finalOwner // Retain the original owner
             )
 
             postViewModel.updatePost(updatedPost)

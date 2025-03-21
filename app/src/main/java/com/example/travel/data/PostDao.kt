@@ -28,4 +28,6 @@ interface PostDao {
 
     @Query("SELECT * FROM posts WHERE id = :postId LIMIT 1")
     suspend fun getPostById(postId: Long): Post?
+
+
 }

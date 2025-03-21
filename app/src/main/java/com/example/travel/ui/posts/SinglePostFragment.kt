@@ -17,6 +17,7 @@ import com.example.travel.viewmodel.PostViewModelFactory
 import com.example.travel.repository.PostRepository
 import com.example.travel.data.AppDatabase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SinglePostFragment : Fragment(R.layout.post_fragment) {
 
@@ -26,6 +27,7 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
     private lateinit var postImageView: ImageView
     private lateinit var editButton: Button
     private lateinit var deleteButton: Button
+    private lateinit var postAuthorTextView: TextView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,16 +37,25 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
         val postRepository = PostRepository(postDao)
         val postViewModelFactory = PostViewModelFactory(postRepository)
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
+
         // Get the postId from arguments
-        val postId = arguments?.getLong("postId") ?: 1  // Default to 1 if not found
+        val postId = arguments?.getLong("postId") ?: -1  // Default to -1 if not found
+
+        if (postId == -1L) {
+            Toast.makeText(requireContext(), "Invalid post ID", Toast.LENGTH_SHORT).show()
+            findNavController().navigateUp()
+            return
+        }
 
         // Set up UI elements
         postTitleTextView = view.findViewById(R.id.tv_post_title)
-        postContentTextView =  view.findViewById(R.id.tv_post_content)
+        postContentTextView = view.findViewById(R.id.tv_post_content)
         postImageView = view.findViewById(R.id.iv_post_image)
         editButton = view.findViewById(R.id.btn_edit)
         deleteButton = view.findViewById(R.id.btn_delete)
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        postAuthorTextView = view.findViewById(R.id.tv_post_author)
+
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
         // Fetch the post by ID
         postViewModel.getPostById(postId)
@@ -55,18 +66,23 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
                 // Display the post details
                 postTitleTextView.text = post.title
                 postContentTextView.text = post.content
+                postAuthorTextView.text = "By: ${post.owner}"
+
                 Glide.with(requireContext())  // Use Glide to load the image
-                    .load(post.imagePath)      // The image URL or path
-                    .placeholder(R.drawable.placeholder_image)  // Optional placeholder
-                    .error(R.drawable.error_image)  // Optional error image
+                    .load(post.imagePath)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.error_image)
                     .into(postImageView)
-                if ( currentUserId == post.owner) {
+
+                // Show edit/delete buttons only if the current user is the post owner
+                if (currentUserId.isNotEmpty() && currentUserId == post.owner) {
                     editButton.visibility = View.VISIBLE
                     deleteButton.visibility = View.VISIBLE
                 } else {
                     editButton.visibility = View.GONE
                     deleteButton.visibility = View.GONE
                 }
+
                 editButton.setOnClickListener {
                     val bundle = Bundle().apply { putLong("postId", postId) }
                     findNavController().navigate(R.id.action_singlePostFragment_to_editPostFragment, bundle)
@@ -74,15 +90,18 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
 
                 deleteButton.setOnClickListener {
                     deletePost(postId)
-                }            } else {
-                // Handle the case where the post is not found (optional)
+                }
+            } else {
+                // Handle the case where the post is not found
                 Toast.makeText(requireContext(), "Post not found", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
     private fun deletePost(postId: Long) {
         postViewModel.deletePost(postId)
         Toast.makeText(requireContext(), "Post deleted", Toast.LENGTH_SHORT).show()
         findNavController().navigateUp()
     }
+
 }

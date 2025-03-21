@@ -40,4 +40,5 @@ class PostRepository(private val postDao: PostDao) {
     suspend fun getPostById(postId: Long): Post? {
         return postDao.getPostById(postId)
     }
+
 }
