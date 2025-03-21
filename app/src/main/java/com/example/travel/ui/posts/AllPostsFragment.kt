@@ -1,11 +1,11 @@
 package com.example.travel.ui.posts
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travel.R
@@ -54,13 +54,7 @@ class AllPostsFragment : Fragment(R.layout.fragment_all_posts) {
             putLong("postId", postId)
         }
 
-        val singlePostFragment = SinglePostFragment().apply {
-            arguments = bundle
-        }
-
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.nav_host_fragment, SinglePostFragment::class.java, bundle) // Fix ID
-            .addToBackStack(null)
-            .commit()
+        // Use NavController to navigate
+        findNavController().navigate(R.id.action_allPostsFragment_to_singlePostFragment, bundle)
     }
 }

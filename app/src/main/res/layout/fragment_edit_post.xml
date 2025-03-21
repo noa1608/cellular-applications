@@ -1,36 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    tools:context=".ui.posts.EditPostFragment">
 
+    <!-- Title EditText -->
     <EditText
         android:id="@+id/et_post_title"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="Post Title"
-        android:textSize="18sp"
-        android:padding="10dp"
-        android:background="@android:drawable/editbox_background"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Content EditText -->
     <EditText
         android:id="@+id/et_post_content"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="Post Content"
-        android:textSize="16sp"
-        android:padding="10dp"
-        android:background="@android:drawable/editbox_background"
-        android:minHeight="150dp"
-        android:gravity="top"
-        android:inputType="textMultiLine"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_post_title" />
 
+    <!-- ImageView for displaying the post image -->
+    <ImageView
+        android:id="@+id/iv_post_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/placeholder_image"
+        android:contentDescription="Post Image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_post_content" />
+
+    <!-- Button to select image -->
+    <Button
+        android:id="@+id/btn_select_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_post_image" />
+
+    <!-- Save Button -->
     <Button
         android:id="@+id/btn_save_post"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save Changes"
-        android:layout_marginTop="16dp"/>
-</LinearLayout>
+        android:text="Save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_select_image" />
+</androidx.constraintlayout.widget.ConstraintLayout>

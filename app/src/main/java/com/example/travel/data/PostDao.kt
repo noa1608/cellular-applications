@@ -14,8 +14,8 @@ interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPost(post: Post): Long
 
-    @Query("UPDATE posts SET title = :title, content = :content WHERE id = :postId")
-    suspend fun updatePost(postId: Long, title: String, content: String)
+    @Update
+    suspend fun updatePost(post: Post): Int
 
     @Query("DELETE FROM posts WHERE id = :postId")
     suspend fun deletePost(postId: Long)

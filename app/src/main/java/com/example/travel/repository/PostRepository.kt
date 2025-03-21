@@ -20,8 +20,9 @@ class PostRepository(private val postDao: PostDao) {
         }
     }
 
-    suspend fun updatePost(postId: Long, title: String, content: String) {
-        postDao.updatePost(postId, title, content)
+    suspend fun updatePost(post: Post): Boolean {
+        val result = postDao.updatePost(post)
+        return result > 0
     }
 
     suspend fun deletePostById(postId: Long) {

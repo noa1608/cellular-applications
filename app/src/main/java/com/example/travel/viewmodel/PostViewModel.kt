@@ -13,6 +13,8 @@
 
     class PostViewModel(private val postRepository: PostRepository) : ViewModel() {
         private val _post = MutableLiveData<Post?>()
+        private val _postUpdateResult = MutableLiveData<Boolean>()
+        val postUpdateResult: LiveData<Boolean> get() = _postUpdateResult
         val post: LiveData<Post?> get() = _post
         private val _postInsertResult = MutableLiveData<Long>()
         val postInsertResult: LiveData<Long> get() = _postInsertResult
@@ -23,11 +25,17 @@
             }
         }
 
-        fun updatePost(postId: Long, title: String, content: String) {
+        fun updatePost(post: Post) {
             viewModelScope.launch {
-                postRepository.updatePost(postId, title, content)
+                try {
+                    val result = postRepository.updatePost(post)
+                    _postUpdateResult.postValue(result)
+                } catch (e: Exception) {
+                    _postUpdateResult.postValue(false)
+                }
             }
         }
+
 
         fun deletePost(postId: Long) {
             viewModelScope.launch {
