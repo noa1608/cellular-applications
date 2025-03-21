@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.travel.data.User
 import com.example.travel.repository.UserRepository
 import kotlinx.coroutines.launch
+import android.net.Uri
+
 
 class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
@@ -17,7 +19,6 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     fun saveUserToFirestore(user: User) {
         viewModelScope.launch {
             repository.saveUserToFirestore(user)
-            repository.insertUserToRoom(user)
         }
     }
 
@@ -37,5 +38,8 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         viewModelScope.launch {
             repository.syncUserFromFirestore(userId)
         }
+    }
+    suspend fun uploadProfilePicture(uri: Uri): String? {
+        return repository.uploadProfilePicture(uri)
     }
 }

@@ -15,8 +15,15 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val CLOUDINARY_CLOUD_NAME: String by project
+        val CLOUDINARY_API_KEY: String by project
+        val CLOUD_UNSIGNED_PRESET: String by project
+
+        buildConfigField("String", "CLOUD_NAME", "\"$CLOUDINARY_CLOUD_NAME\"")
+        buildConfigField("String", "API_KEY", "\"$CLOUDINARY_API_KEY\"")
+        buildConfigField ("String", "CLOUD_UNSIGNED_PRESET", "\"$CLOUD_UNSIGNED_PRESET\"")
     }
 
     buildTypes {
@@ -38,6 +45,8 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
+
     }
 }
 
@@ -54,6 +63,7 @@ dependencies {
     implementation(libs.androidx.navigation.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.firebase.storage.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -74,4 +84,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.glide)
     annotationProcessor(libs.androidx.glideCompiler)
+    implementation(libs.cloudinary)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
 }
