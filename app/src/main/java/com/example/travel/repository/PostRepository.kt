@@ -7,6 +7,9 @@ import com.example.travel.data.PostDao
 import com.example.travel.data.User
 import com.example.travel.data.firebase.FirebaseService
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PostRepository(private val postDao: PostDao,private val firebaseService: FirebaseService) {
 
@@ -25,7 +28,19 @@ class PostRepository(private val postDao: PostDao,private val firebaseService: F
             return null
         }
     }
-
+    fun createPost(post: Post) {
+        firebaseService.savePost(post) { postId ->
+            if (postId != null) {
+                firebaseService.syncPostFromFirestore(postId) { syncedPost ->
+                    syncedPost?.let {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            postDao.insertPost(it)
+                        }
+                    }
+                }
+            }
+        }
+    }
     suspend fun updatePost(post: Post) {
         postDao.updatePost(post)
     }

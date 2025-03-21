@@ -1,5 +1,6 @@
 package com.example.travel.ui
 
+import android.util.Log
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -69,7 +70,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             this,
             PostViewModelFactory(PostRepository(db.postDao(),firebaseService ), cloudinaryModel)
         )[PostViewModel::class.java]
-
+        Log.d("ProfileFragment", "userEmail: $userEmail")
         // Fetch user info from Room (synced with Firestore)
         userViewModel.getUserByEmail(userEmail).observe(viewLifecycleOwner) { user ->
             user?.let {
@@ -85,7 +86,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
                 // Load user posts
                 postViewModel.getAllPosts().observe(viewLifecycleOwner) { allPosts ->
+                    Log.d("ProfileFragment", "All posts: $allPosts")
+                    allPosts.forEach { post ->
+                        Log.d("ProfileFragment", "Post owner: ${post.owner}")
+                    }
                     val userPosts = allPosts.filter { post -> post.owner == userEmail }
+                    Log.d("ProfileFragment", "User posts: $userPosts")
                     recyclerView.adapter = ProfilePostAdapter(userPosts)
                 }
             }

@@ -1,7 +1,11 @@
 package com.example.travel.data.firebase
 
 import com.example.travel.data.Post
+import com.example.travel.data.User
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FirebaseService {
 
@@ -21,6 +25,30 @@ class FirebaseService {
             }
             .addOnFailureListener {
                 onComplete(null)
+            }
+    }
+
+    fun syncPostFromFirestore(postId: String, onPostFetched: (Post?) -> Unit) {
+        db.collection("posts").document(postId).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val data = document.data
+                    data?.let {
+                        val post = Post(
+                            id = document.id,
+                            title = it["title"] as? String ?: "",
+                            content = it["content"] as? String ?: "",
+                            imagePath = it["imagePath"] as? String ?: "",
+                            owner = it["owner"] as? String ?: ""
+                        )
+                        onPostFetched(post)
+                    } ?: onPostFetched(null)
+                } else {
+                    onPostFetched(null)
+                }
+            }
+            .addOnFailureListener {
+                onPostFetched(null)
             }
     }
 }

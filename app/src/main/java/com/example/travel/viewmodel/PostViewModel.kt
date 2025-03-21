@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.lifecycle.MutableLiveData
 import com.example.travel.data.CloudinaryModel
+import com.google.firebase.auth.FirebaseAuth
 import java.io.InputStream
 
 
@@ -24,6 +25,12 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
 
     private val _postInsertResult = MutableLiveData<String?>()
     val postInsertResult: LiveData<String?> get() = _postInsertResult
+
+    fun createPost(post: Post) {
+        viewModelScope.launch {
+            postRepository.createPost(post)
+        }
+    }
 
     fun createPostWithImage(
         context: Context,
@@ -39,6 +46,7 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
             if (bitmap != null) {
                 // Upload image to Cloudinary
                 cloudinaryModel.uploadImage(bitmap, post.title, { imageUrl ->
+                    Log.d("Cloudinary", "Image uploaded successfully: $imageUrl")
                     if (imageUrl != null) {
                         // Create a new post with the Cloudinary image URL
                         val newPost = post.copy(imagePath = imageUrl)  // Copy the post with the updated image path
@@ -48,8 +56,7 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
                             if (postId != null) {
                                 // Create a new Post with the updated ID
                                 val postWithId = newPost.copy(id = postId)  // Create a new instance with the Firebase-generated ID
-
-                                postRepository.insertPost(postWithId)
+                                postRepository.createPost(postWithId)
 
                                 _postInsertResult.postValue(postId)
                                 onSuccess(postId)
@@ -61,6 +68,7 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
                         onError("Failed to upload image.")
                     }
                 }, { error ->
+                    Log.e("Cloudinary", "Image upload failed: $error")
                     onError(error ?: "Unknown error occurred.")
                 })
             } else {
