@@ -8,14 +8,22 @@
 
     <EditText
         android:id="@+id/emailEditText"
+        android:layout_height="56dp"
+        android:padding="12dp"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_edittext"
         android:hint="Email" />
 
     <EditText
         android:id="@+id/passwordEditText"
+        android:layout_height="56dp"
+        android:padding="12dp"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"
+        android:background="@drawable/rounded_edittext"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword" />
 
@@ -23,6 +31,8 @@
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button"
         android:text="Login" />
 
     <TextView
