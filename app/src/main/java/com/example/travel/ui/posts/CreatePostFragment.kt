@@ -96,10 +96,8 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
             postViewModel.createPostWithImage(requireContext(), newPost, imageUri!!, { postId ->
                 Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
-                val bundle = Bundle().apply {
-                    putString("postId", postId) // ✅ Pass the correct post ID
-                }
-                findNavController().navigate(R.id.singlePostFragment, bundle)
+                val action = CreatePostFragmentDirections.actionCreatePostFragmentToSinglePostFragment(postId)
+                findNavController().navigate(action)
             }, { error ->
                 Toast.makeText(requireContext(), "Failed to save post: $error", Toast.LENGTH_SHORT).show()
             })

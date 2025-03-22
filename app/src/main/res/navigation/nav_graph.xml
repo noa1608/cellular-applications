@@ -9,7 +9,15 @@
         android:id="@+id/createPostFragment"
         android:name="com.example.travel.ui.posts.CreatePostFragment"
         android:label="Create Post"
-        tools:layout="@layout/fragment_create_post" />
+        tools:layout="@layout/fragment_create_post" >
+        <action
+            android:id="@+id/action_createPostFragment_to_singlePostFragment"
+            app:destination="@id/singlePostFragment">
+            <argument
+                android:name="postId"
+                app:argType="string" />
+        </action>
+    </fragment>
 
     <!-- Single Post Fragment -->
     <fragment
@@ -17,11 +25,18 @@
         android:name="com.example.travel.ui.posts.SinglePostFragment"
         android:label="Show single post"
         tools:layout="@layout/post_fragment">
-
+        <argument
+            android:name="postId"
+            app:argType="string" />
         <!-- Action to Edit Post Fragment -->
         <action
             android:id="@+id/action_singlePostFragment_to_editPostFragment"
-            app:destination="@id/editPostFragment" />
+            app:destination="@id/editPostFragment" >
+            <argument
+            android:name="postId"
+            app:argType="string" />
+        </action>
+
     </fragment>
 
     <!-- Edit Post Fragment -->
@@ -29,7 +44,11 @@
         android:id="@+id/editPostFragment"
         android:name="com.example.travel.ui.posts.EditPostFragment"
         android:label="Edit Post"
-        tools:layout="@layout/fragment_edit_post" />
+        tools:layout="@layout/fragment_edit_post" >
+    <argument
+        android:name="postId"
+        app:argType="string" />
+    </fragment>
 
     <!-- All Posts Fragment -->
     <fragment
@@ -41,7 +60,11 @@
         <!-- Action to Single Post Fragment -->
         <action
             android:id="@+id/action_allPostsFragment_to_singlePostFragment"
-            app:destination="@id/singlePostFragment" />
+            app:destination="@id/singlePostFragment" >
+            <argument
+                android:name="postId"
+                app:argType="string" />
+        </action>
     </fragment>
 
     <fragment

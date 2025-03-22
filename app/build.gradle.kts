@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("com.google.gms.google-services")
+    id("androidx.navigation.safeargs.kotlin") version libs.versions.navigation.get()
+
+
 }
 
 android {
@@ -101,5 +104,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.glide)
-
+    implementation("androidx.navigation:navigation-fragment-ktx:${libs.versions.navigation.get()}")
+    implementation("androidx.navigation:navigation-ui-ktx:${libs.versions.navigation.get()}")
 }
+
