@@ -31,8 +31,8 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         repository.syncUserFromFirestore(userId)
     }
 
-    fun getUserById(userId: String) = viewModelScope.launch {
-        val user = repository.getUserById(userId)
+    fun getUserById(userId: String) : LiveData<User?> {
+        return repository.getUserById(userId)
     }
     fun getUserByEmail(email: String): LiveData<User?> {
         return repository.getUserByEmail(email)

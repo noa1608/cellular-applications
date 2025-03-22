@@ -12,13 +12,13 @@ import androidx.room.Delete
 interface PostDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertPost(post: Post)
+    suspend fun insertPost(post: Post): Long
 
     @Update
-    suspend fun updatePost(post: Post)
+    suspend fun updatePost(post: Post): Int
 
-    @Delete
-    suspend fun deletePost(post: Post)
+    @Query("DELETE FROM posts WHERE id = :postId")
+    suspend fun deletePost(postId: String)
 
     @Query("SELECT * FROM posts ORDER BY id DESC")
     fun getAllPosts(): LiveData<List<Post>>
@@ -27,5 +27,7 @@ interface PostDao {
     suspend fun getUserPosts(owner: String): List<Post>
 
     @Query("SELECT * FROM posts WHERE id = :postId LIMIT 1")
-    suspend fun getPostById(postId: Int): Post?
+    suspend fun getPostById(postId: String): Post?
+
+
 }

@@ -17,7 +17,7 @@ interface UserDao {
     suspend fun updateUser(user: User)
 
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
-    suspend fun getUserById(userId: String): User?
+    fun getUserById(userId: String): LiveData<User?>
 
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     fun getUserByEmail(email: String): LiveData<User?>

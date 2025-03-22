@@ -40,7 +40,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
-import com.example.travel.auth.LoginActivity
+import com.example.travel.ui.auth.LoginActivity
 import com.example.travel.data.CloudinaryModel
 import com.example.travel.data.firebase.FirebaseService
 
@@ -55,12 +55,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private lateinit var pickImageLauncher: ActivityResultLauncher<String>
     private lateinit var profileImage: ImageView
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        // Inflate the custom menu for the profile fragment
-        inflater.inflate(R.menu.profile_toolbar_menu, menu)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -68,7 +62,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_user_posts)
         val layoutManager = GridLayoutManager(requireContext(), 2)
         val db = AppDatabase.getDatabase(requireContext())
-        val userEmail = auth.currentUser?.email ?: ""
+        val userId = auth.currentUser?.uid ?: ""
         val tvUsername = view.findViewById<TextView>(R.id.tv_username)
         val tvEmail = view.findViewById<TextView>(R.id.tv_email)
         profileImage = view.findViewById(R.id.profile_image)
@@ -84,7 +78,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             this,
             PostViewModelFactory(PostRepository(db.postDao(),firebaseService ), cloudinaryModel)
         )[PostViewModel::class.java]
-        Log.d("ProfileFragment", "userEmail: $userEmail")
+        Log.d("ProfileFragment", "userId: $userId")
 
         pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -92,7 +86,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             }
         }
         // Fetch user info from Room (synced with Firestore)
-        userViewModel.getUserByEmail(userEmail).observe(viewLifecycleOwner) { user ->
+        userViewModel.getUserById(userId).observe(viewLifecycleOwner) { user ->
             user?.let {
                 tvUsername.text = it.username
                 tvEmail.text = it.email
@@ -105,12 +99,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     .into(profileImage)
 
                 // Load user posts
-                postViewModel.getAllPosts().observe(viewLifecycleOwner) { allPosts ->
+                postViewModel.postList.observe(viewLifecycleOwner) { allPosts ->
                     Log.d("ProfileFragment", "All posts: $allPosts")
                     allPosts.forEach { post ->
                         Log.d("ProfileFragment", "Post owner: ${post.owner}")
                     }
-                    val userPosts = allPosts.filter { post -> post.owner == userEmail }
+                    val userPosts = allPosts.filter { post -> post.owner == userId }
                     Log.d("ProfileFragment", "User posts: $userPosts")
                     recyclerView.adapter = ProfilePostAdapter(userPosts)
                 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <Button
+        android:id="@+id/btn_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:visibility="gone" />
+
+    <!-- Title of the Post -->
+    <TextView
+        android:id="@+id/tv_post_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Post Title"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
+    <TextView
+        android:id="@+id/tv_post_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author: Unknown"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Content of the Post -->
+    <TextView
+        android:id="@+id/tv_post_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Post content goes here."
+        android:textSize="14sp"
+        android:paddingBottom="8dp" />
+
+    <!-- ImageView to display Post Image -->
+    <ImageView
+        android:id="@+id/iv_post_image"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/placeholder_image" />
+</LinearLayout>

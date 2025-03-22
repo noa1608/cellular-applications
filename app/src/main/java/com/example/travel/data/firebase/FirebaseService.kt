@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.internal.userAgent
 
 class FirebaseService {
 
@@ -50,5 +51,67 @@ class FirebaseService {
             .addOnFailureListener {
                 onPostFetched(null)
             }
+    }
+    fun getUserById(userId: String, onUserFetched: (User?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val data = document.data
+                    data?.let {
+                        val user = User(
+                            id = document.id,
+                            username = it["username"] as? String ?: "Unknown",
+                            email = it["email"] as? String ?: "No Email"
+                        )
+                        onUserFetched(user)
+                    }
+                } else {
+                    onUserFetched(null)
+                }
+            }
+            .addOnFailureListener {
+                onUserFetched(null)
+            }
+    }
+    fun updatePost(post: Post): Boolean {
+        return try {
+            val postMap = hashMapOf(
+                "title" to post.title,
+                "content" to post.content,
+                "imagePath" to post.imagePath,
+                "owner" to post.owner
+            )
+
+            FirebaseFirestore.getInstance().collection("posts")
+                .document(post.id)
+                .set(postMap) // Update the post
+                .addOnSuccessListener {
+                    // Post updated successfully in Firebase
+                }
+                .addOnFailureListener {
+                    // Handle failure
+                }
+            true // Return success
+        } catch (e: Exception) {
+            false // Return failure
+        }
+    }
+    fun deletePost(postId: String): Boolean {
+        return try {
+            FirebaseFirestore.getInstance().collection("posts")
+                .document(postId)
+                .delete()
+                .addOnSuccessListener {
+                    // Post deleted successfully in Firebase
+                }
+                .addOnFailureListener {
+                    // Handle failure
+                }
+            true // Return success
+        } catch (e: Exception) {
+            false // Return failure
+        }
     }
 }

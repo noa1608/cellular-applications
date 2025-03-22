@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.travel"
-        minSdk = 28
+        minSdk = 35
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -65,6 +65,9 @@ dependencies {
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.firebase.storage.ktx)
     implementation(libs.play.services.cast.tv)
+    implementation(libs.androidx.navigation.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.media3.common.ktx)
     implementation(libs.car.ui.lib)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -90,4 +93,12 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.okhttp)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.glide)
+
 }
