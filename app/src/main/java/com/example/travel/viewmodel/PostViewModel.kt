@@ -21,16 +21,18 @@ import com.google.firebase.auth.FirebaseAuth
 import java.io.InputStream
 
 
+
 class PostViewModel(private val postRepository: PostRepository, private val cloudinaryModel: CloudinaryModel) : ViewModel() {
 
     private val _postInsertResult = MutableLiveData<String?>()
     val postInsertResult: LiveData<String?> get() = _postInsertResult
+    private val _post = MutableLiveData<Post?>()
+    private val _postUpdateResult = MutableLiveData<Boolean>()
+    private val _postDeleteResult = MutableLiveData<Boolean>()
+    val postUpdateResult: LiveData<Boolean> get() = _postUpdateResult
+    val postDeleteResult: LiveData<Boolean> get() = _postDeleteResult
 
-    fun createPost(post: Post) {
-        viewModelScope.launch {
-            postRepository.createPost(post)
-        }
-    }
+    val post: LiveData<Post?> get() = _post
 
     fun createPostWithImage(
         context: Context,
@@ -77,6 +79,21 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
         }
     }
 
+    fun updatePost(post: Post) {
+        viewModelScope.launch {
+            val result = postRepository.updatePost(post)
+            _postUpdateResult.postValue(result)
+        }
+    }
+
+    fun deletePost(postId: String) {
+        viewModelScope.launch {
+            val result = postRepository.deletePostById(postId)
+            _postDeleteResult.postValue(result)
+        }
+    }
+
+
 
     private fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
         return try {
@@ -87,35 +104,18 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
         }
     }
 
-    fun insertPost(post: Post) {
-        viewModelScope.launch {
-            val result = postRepository.insertPost(post) // Assuming insertPost returns a Boolean
-            _postInsertResult.postValue(result)  // postValue should be used to update LiveData from background thread
+
+    val postList: LiveData<List<Post>> = postRepository.getAllPosts()
+
+
+        fun getUserPosts(owner: String) = liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
+            emit(postRepository.getUserPosts(owner))
+        }
+
+    fun getPostById(postId: String) {
+        postRepository.getPostById(postId) { result ->
+            _post.postValue(result)
         }
     }
 
-    fun updatePost(post: Post) = liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-        postRepository.updatePost(post)
-        emit(Unit)
     }
-
-    fun deletePost(post: Post) = liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-        postRepository.deletePost(post)
-        emit(Unit)
-    }
-
-    fun getAllPosts(): LiveData<List<Post>> = liveData(Dispatchers.IO) {
-        val posts = postRepository.getAllPosts()
-        emitSource(posts)
-    }
-
-
-    fun getUserPosts(owner: String) = liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-        emit(postRepository.getUserPosts(owner))
-    }
-
-    fun getPostById(postId: Int) = liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-        emit(postRepository.getPostById(postId))  
-    }
-
-}

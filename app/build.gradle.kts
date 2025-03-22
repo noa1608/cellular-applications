@@ -2,19 +2,21 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.gms.google-services")
     alias(libs.plugins.ksp)
+    id("com.google.gms.google-services")
 }
+
 android {
     namespace = "com.example.travel"
     compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.travel"
-        minSdk = 26
+        minSdk = 35
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val CLOUDINARY_CLOUD_NAME: String by project
@@ -65,6 +67,9 @@ dependencies {
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.firebase.storage.ktx)
     implementation(libs.play.services.cast.tv)
+    implementation(libs.androidx.navigation.ktx)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.media3.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -89,4 +94,12 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.okhttp)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.glide)
+
 }

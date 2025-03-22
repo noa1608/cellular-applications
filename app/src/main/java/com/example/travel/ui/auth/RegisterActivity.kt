@@ -1,4 +1,4 @@
-package com.example.travel.auth
+package com.example.travel.ui.auth
 
 import android.content.ContentResolver
 import android.content.Intent
@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,7 @@ import com.example.travel.repository.UserRepository
 import com.example.travel.viewmodel.UserViewModel
 import com.example.travel.viewmodel.UserViewModelFactory
 import com.example.travel.data.CloudinaryModel // Import the CloudinaryModel
+import com.example.travel.ui.auth.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -77,6 +79,8 @@ class RegisterActivity : AppCompatActivity() {
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
         val registerButton = findViewById<Button>(R.id.registerButton)
         val selectProfileImageButton = findViewById<Button>(R.id.selectProfileImageButton)
+        val loginTextView = findViewById<TextView>(R.id.registerTextView)
+
 
         // Image picker button
         selectProfileImageButton.setOnClickListener {
@@ -137,7 +141,8 @@ class RegisterActivity : AppCompatActivity() {
                                                 // User created & synced successfully
                                                 Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
                                                 startActivity(Intent(this, LoginActivity::class.java))
-                                                finish()                                            }
+                                                finish()
+                                            }
                                             result.onFailure { error ->
                                                 // Handle error
                                                 Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
@@ -153,7 +158,6 @@ class RegisterActivity : AppCompatActivity() {
                                     Toast.makeText(this, "Image upload failed: $error", Toast.LENGTH_SHORT).show()
                                 })
                         } else {
-                            Log.e("RegisterActivity", "Registration failed: ${task.exception?.message}")
                             Toast.makeText(this, "Registration failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -161,6 +165,9 @@ class RegisterActivity : AppCompatActivity() {
                 Log.e("RegisterActivity", "Failed to convert Uri to Bitmap")
                 Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
             }
+        }
+        loginTextView.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
     }

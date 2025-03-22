@@ -1,14 +1,10 @@
-package com.example.travel.ui
+package com.example.travel.ui.posts
 
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -36,7 +32,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     private var imageUri: Uri? = null
     private lateinit var postViewModel: PostViewModel
     private lateinit var imageView: ImageView
-
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -52,9 +47,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         val postRepository = PostRepository(postDao, firebaseService)
         val postViewModelFactory = PostViewModelFactory(postRepository, cloudinaryModel)
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
-        postViewModel.getAllPosts().observe(viewLifecycleOwner) { posts ->
-            Log.d("CreatePostFragment", "All Posts: $posts")
-        }
         val postTitle = view.findViewById<EditText>(R.id.et_post_title)
         val postDescription = view.findViewById<EditText>(R.id.et_post_description)
         val saveButton = view.findViewById<Button>(R.id.btn_save_post)
@@ -65,12 +57,12 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             pickImageLauncher.launch("image/*")
         }
 
+        // Save post when the save button is clicked
         saveButton.setOnClickListener {
             val title = postTitle.text.toString().trim()
             val description = postDescription.text.toString().trim()
             val currentUser = FirebaseAuth.getInstance().currentUser
-            val owner = currentUser?.email ?: "unknown_user"
-
+            val owner = currentUser?.uid ?: "unknown_user"
             // Validate inputs
             if (title.isEmpty() || description.isEmpty()) {
                 Toast.makeText(requireContext(), "Title and description cannot be empty", Toast.LENGTH_SHORT).show()
@@ -85,6 +77,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
             val imagePath = savePostImageToDirectory(imageUri!!, requireContext())
 
+            // If saving the image failed, show an error
             if (imagePath == null) {
                 Toast.makeText(requireContext(), "Failed to save image", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -100,10 +93,13 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             Log.d("CreatePostFragment", "Saving post: Title: $title, Description: $description, ImagePath: $imagePath")
             // Save the post using ViewModel
 
-            // Observe the result from ViewModel
+
             postViewModel.createPostWithImage(requireContext(), newPost, imageUri!!, { postId ->
                 Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.profileFragment)
+                val bundle = Bundle().apply {
+                    putString("postId", postId) // ✅ Pass the correct post ID
+                }
+                findNavController().navigate(R.id.singlePostFragment, bundle)
             }, { error ->
                 Toast.makeText(requireContext(), "Failed to save post: $error", Toast.LENGTH_SHORT).show()
             })

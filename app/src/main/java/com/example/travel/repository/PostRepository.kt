@@ -2,6 +2,7 @@ package com.example.travel.repository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.travel.data.Post
 import com.example.travel.data.PostDao
 import com.example.travel.data.User
@@ -16,18 +17,15 @@ class PostRepository(private val postDao: PostDao,private val firebaseService: F
 
     fun savePostToFirebase(post: Post, onComplete: (String?) -> Unit) {
         firebaseService.savePost(post) { postId ->
-            onComplete(postId)  // Return the generated post ID
+            onComplete(postId)
         }
     }
 
-    fun insertPost(post: Post): String? {
-        try {
-            postDao.insertPost(post)
-            return post.id
-        } catch (e: Exception) {
-            return null
-        }
+    suspend fun insertPost(post: Post): String? {
+        postDao.insertPost(post)
+        return post.id
     }
+
     fun createPost(post: Post) {
         firebaseService.savePost(post) { postId ->
             if (postId != null) {
@@ -41,12 +39,37 @@ class PostRepository(private val postDao: PostDao,private val firebaseService: F
             }
         }
     }
-    suspend fun updatePost(post: Post) {
-        postDao.updatePost(post)
+    suspend fun updatePost(post: Post): Boolean {
+        return try {
+            // Update post in Firebase
+            val firebaseUpdateResult = firebaseService.updatePost(post)
+            if (firebaseUpdateResult) {
+                // Update post in Room if Firebase update is successful
+                postDao.updatePost(post)
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
     }
 
-    suspend fun deletePost(post: Post) {
-        postDao.deletePost(post)
+
+    suspend fun deletePostById(postId: String): Boolean {
+        return try {
+            // Delete post from Firebase
+            val firebaseDeleteResult = firebaseService.deletePost(postId)
+            if (firebaseDeleteResult) {
+                // Delete post from Room if Firebase deletion is successful
+                postDao.deletePost(postId)
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
     }
 
     fun getAllPosts(): LiveData<List<Post>> {
@@ -57,7 +80,21 @@ class PostRepository(private val postDao: PostDao,private val firebaseService: F
         return postDao.getUserPosts(owner)
     }
 
-    suspend fun getPostById(postId: Int): Post? {
-        return postDao.getPostById(postId)
-    }
+    fun getPostById(postId: String, onPostFetched: (Post?) -> Unit) {
+            CoroutineScope(Dispatchers.IO).launch {
+                var post = postDao.getPostById(postId)
+                if (post != null) {
+                    onPostFetched(post)  // If found in Room, return it
+                } else {
+                    firebaseService.syncPostFromFirestore(postId) { firebasePost ->
+                        firebasePost?.let {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                postDao.insertPost(it)  // Save to Room for future use
+                            }
+                        }
+                        onPostFetched(firebasePost)  // Return Firebase data
+                    }
+                }
+            }    }
+
 }

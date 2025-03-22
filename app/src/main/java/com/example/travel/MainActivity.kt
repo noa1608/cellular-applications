@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.example.travel.auth.LoginActivity
+import com.example.travel.ui.auth.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.example.travel.R
 import com.google.android.material.bottomnavigation.BottomNavigationView

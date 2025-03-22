@@ -32,7 +32,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
-import com.example.travel.auth.LoginActivity
+import com.example.travel.ui.auth.LoginActivity
 import com.example.travel.data.CloudinaryModel
 import com.example.travel.data.firebase.FirebaseService
 
@@ -85,7 +85,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     .into(profileImage)
 
                 // Load user posts
-                postViewModel.getAllPosts().observe(viewLifecycleOwner) { allPosts ->
+                postViewModel.postList.observe(viewLifecycleOwner) { allPosts ->
                     Log.d("ProfileFragment", "All posts: $allPosts")
                     allPosts.forEach { post ->
                         Log.d("ProfileFragment", "Post owner: ${post.owner}")
