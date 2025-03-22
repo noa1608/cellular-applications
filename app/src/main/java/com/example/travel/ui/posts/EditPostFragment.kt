@@ -9,16 +9,18 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.travel.R
 import com.example.travel.data.AppDatabase
 import com.example.travel.data.Post
 import com.example.travel.repository.PostRepository
 import com.example.travel.viewmodel.PostViewModel
 import com.example.travel.viewmodel.PostViewModelFactory
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.navigation.fragment.findNavController
 import com.example.travel.data.CloudinaryModel
 import com.example.travel.data.firebase.FirebaseService
+import androidx.activity.result.contract.ActivityResultContracts
 
 class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
 
@@ -30,7 +32,10 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
     private lateinit var selectImageButton: Button
     private lateinit var imageView: ImageView
 
-    private var postId: String = ""
+    // Use Safe Args to get the postId
+    private val args: EditPostFragmentArgs by navArgs()
+    private var postId: String = args.postId
+
     private var originalImagePath: String? = null
     private var originalOwner: String? = null
 
@@ -45,7 +50,6 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        postId = arguments?.getString("postId") ?: ""
         val firebaseService = FirebaseService()
         val cloudinaryModel = CloudinaryModel()
         val postDao = AppDatabase.getDatabase(requireContext()).postDao()
@@ -68,7 +72,7 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
                 originalImagePath = it.imagePath // Save the original image path
                 originalOwner = it.owner // Save the original owner
                 imageUri = Uri.parse(it.imagePath) // Assuming imagePath is stored as a URI
-                imageView.setImageURI(imageUri) // Display the current image
+                Glide.with(requireContext()).load(imageUri).into(imageView) // Display the current image
             } ?: run {
                 Toast.makeText(requireContext(), "Post not found", Toast.LENGTH_SHORT).show()
             }

@@ -20,6 +20,9 @@ import com.example.travel.data.CloudinaryModel
 import com.example.travel.data.firebase.FirebaseService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.example.travel.ui.posts.SinglePostFragmentArgs
+
+
 
 class SinglePostFragment : Fragment(R.layout.post_fragment) {
 
@@ -42,7 +45,8 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
 
         // Get the postId from arguments
-        val postId = arguments?.getString("postId")?:""
+        val args = SinglePostFragmentArgs.fromBundle(requireArguments())
+        val postId = args.postId
 
         // Set up UI elements
         postTitleTextView = view.findViewById(R.id.tv_post_title)
@@ -88,8 +92,8 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
                 }
 
                 editButton.setOnClickListener {
-                    val bundle = Bundle().apply { putString("postId", postId) }
-                    findNavController().navigate(R.id.action_singlePostFragment_to_editPostFragment, bundle)
+                    val action = SinglePostFragmentDirections.actionSinglePostFragmentToEditPostFragment(postId)
+                    findNavController().navigate(action)
                 }
 
                 deleteButton.setOnClickListener {
