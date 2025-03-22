@@ -7,10 +7,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -20,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.android.car.ui.toolbar.MenuItem
 import com.bumptech.glide.Glide
 import com.example.travel.R
 import com.example.travel.data.AppDatabase
@@ -50,9 +55,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private lateinit var pickImageLauncher: ActivityResultLauncher<String>
     private lateinit var profileImage: ImageView
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        // Inflate the custom menu for the profile fragment
+        inflater.inflate(R.menu.profile_toolbar_menu, menu)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         auth = FirebaseAuth.getInstance()
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_user_posts)
@@ -106,27 +116,41 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 }
             }
         }
+        val moreOptionsBtn = view.findViewById<ImageButton>(R.id.btn_more_options)
+        moreOptionsBtn.setOnClickListener {
+            val popup = PopupMenu(requireContext(), moreOptionsBtn)
+            popup.menuInflater.inflate(R.menu.menu_profile, popup.menu)
 
-        val editButton = view.findViewById<Button>(R.id.btn_edit_profile)
-        editButton.setOnClickListener {
-            showEditProfileDialog()
-        }
-        val logoutButton = view.findViewById<Button>(R.id.logoutButton)
-        logoutButton.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Logout")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Yes") { _, _ ->
-                    FirebaseAuth.getInstance().signOut()
-                    val intent = Intent(requireContext(), LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    requireActivity().finish()
+            popup.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_edit -> {
+                        showEditProfileDialog()
+                        true
+                    }
+                    R.id.action_logout -> {
+                        logout()
+                        true
+                    }
+                    else -> false
                 }
-                .setNegativeButton("Cancel", null)
-                .show()
+            }
+            popup.show()
         }
 
+    }
+    private fun logout(){
+        AlertDialog.Builder(requireContext())
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Yes") { _, _ ->
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                requireActivity().finish()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showEditProfileDialog() {
