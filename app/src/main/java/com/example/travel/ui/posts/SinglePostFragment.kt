@@ -53,18 +53,25 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
         postAuthorTextView = view.findViewById(R.id.tv_post_author)
 
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-
+        Log.d("SinglePost","Current User is: $currentUserId")
         // Fetch the post by ID
         postViewModel.getPostById(postId)
-
+        Log.d("SinglePost", "Post id is $postId")
         // Observe the post LiveData
         postViewModel.post.observe(viewLifecycleOwner) { post ->
+            Log.d("SinglePostFragment", "Fetched post: $post")
+
             if (post != null) {
                 // Display the post details
                 postTitleTextView.text = post.title
                 postContentTextView.text = post.content
-                postAuthorTextView.text = "By: ${post.owner}"
-
+                firebaseService.getUserById(post.owner) { user ->
+                    if (user != null) {
+                        postAuthorTextView.text = "By: ${user.username}"
+                    } else {
+                        postAuthorTextView.text = "By: Unknown User"
+                    }
+                }
                 Glide.with(requireContext())  // Use Glide to load the image
                     .load(post.imagePath)
                     .placeholder(R.drawable.placeholder_image)

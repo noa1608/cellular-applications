@@ -28,7 +28,10 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
     val postInsertResult: LiveData<String?> get() = _postInsertResult
     private val _post = MutableLiveData<Post?>()
     private val _postUpdateResult = MutableLiveData<Boolean>()
+    private val _postDeleteResult = MutableLiveData<Boolean>()
     val postUpdateResult: LiveData<Boolean> get() = _postUpdateResult
+    val postDeleteResult: LiveData<Boolean> get() = _postDeleteResult
+
     val post: LiveData<Post?> get() = _post
 
     fun createPostWithImage(
@@ -77,22 +80,19 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
     }
 
     fun updatePost(post: Post) {
-            viewModelScope.launch {
-                try {
-                    val result = postRepository.updatePost(post)
-                    _postUpdateResult.postValue(result)
-                } catch (e: Exception) {
-                    _postUpdateResult.postValue(false)
-                }
-            }
+        viewModelScope.launch {
+            val result = postRepository.updatePost(post)
+            _postUpdateResult.postValue(result)
         }
+    }
 
-
-        fun deletePost(postId: String) {
-            viewModelScope.launch {
-                postRepository.deletePostById(postId)
-            }
+    fun deletePost(postId: String) {
+        viewModelScope.launch {
+            val result = postRepository.deletePostById(postId)
+            _postDeleteResult.postValue(result)
         }
+    }
+
 
 
     private fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
@@ -112,11 +112,10 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
             emit(postRepository.getUserPosts(owner))
         }
 
-        fun getPostById(postId: String) {
-            viewModelScope.launch {
-                val result = postRepository.getPostById(postId)
-                _post.value = result
-            }
+    fun getPostById(postId: String) {
+        postRepository.getPostById(postId) { result ->
+            _post.postValue(result)
         }
+    }
 
     }

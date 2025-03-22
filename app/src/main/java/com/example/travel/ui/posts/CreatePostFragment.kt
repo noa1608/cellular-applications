@@ -62,8 +62,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             val title = postTitle.text.toString().trim()
             val description = postDescription.text.toString().trim()
             val currentUser = FirebaseAuth.getInstance().currentUser
-            val owner = currentUser?.email ?: "unknown_user"
-
+            val owner = currentUser?.uid ?: "unknown_user"
             // Validate inputs
             if (title.isEmpty() || description.isEmpty()) {
                 Toast.makeText(requireContext(), "Title and description cannot be empty", Toast.LENGTH_SHORT).show()

@@ -41,16 +41,35 @@ class PostRepository(private val postDao: PostDao,private val firebaseService: F
     }
     suspend fun updatePost(post: Post): Boolean {
         return try {
-            postDao.updatePost(post)
-            true
+            // Update post in Firebase
+            val firebaseUpdateResult = firebaseService.updatePost(post)
+            if (firebaseUpdateResult) {
+                // Update post in Room if Firebase update is successful
+                postDao.updatePost(post)
+                true
+            } else {
+                false
+            }
         } catch (e: Exception) {
             false
         }
     }
 
 
-    suspend fun deletePostById(postId: String) {
-        postDao.deletePost(postId)
+    suspend fun deletePostById(postId: String): Boolean {
+        return try {
+            // Delete post from Firebase
+            val firebaseDeleteResult = firebaseService.deletePost(postId)
+            if (firebaseDeleteResult) {
+                // Delete post from Room if Firebase deletion is successful
+                postDao.deletePost(postId)
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
     }
 
     fun getAllPosts(): LiveData<List<Post>> {
@@ -61,8 +80,21 @@ class PostRepository(private val postDao: PostDao,private val firebaseService: F
         return postDao.getUserPosts(owner)
     }
 
-    suspend fun getPostById(postId: String): Post? {
-        return postDao.getPostById(postId)
-    }
+    fun getPostById(postId: String, onPostFetched: (Post?) -> Unit) {
+            CoroutineScope(Dispatchers.IO).launch {
+                var post = postDao.getPostById(postId)
+                if (post != null) {
+                    onPostFetched(post)  // If found in Room, return it
+                } else {
+                    firebaseService.syncPostFromFirestore(postId) { firebasePost ->
+                        firebasePost?.let {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                postDao.insertPost(it)  // Save to Room for future use
+                            }
+                        }
+                        onPostFetched(firebasePost)  // Return Firebase data
+                    }
+                }
+            }    }
 
 }

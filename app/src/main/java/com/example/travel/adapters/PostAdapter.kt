@@ -45,8 +45,26 @@ class PostAdapter(private val onPostClick: (String) -> Unit) :
         fun bind(post: Post, onPostClick: (String) -> Unit, userNameCache: MutableMap<String, String>) {
             titleTextView.text = post.title
             contentTextView.text = post.content
-            authorTextView.text = post.owner
-
+            if (userNameCache.containsKey(post.owner)) {
+                authorTextView.text = "By: ${userNameCache[post.owner]}"
+            } else {
+                // Fetch username from Firestore
+                FirebaseFirestore.getInstance().collection("users")
+                    .document(post.owner)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            val username = document.getString("username") ?: "Unknown User"
+                            userNameCache[post.owner] = username // Cache the username
+                            authorTextView.text = "By: $username"
+                        } else {
+                            authorTextView.text = "By: Unknown User"
+                        }
+                    }
+                    .addOnFailureListener {
+                        authorTextView.text = "By: Unknown User"
+                    }
+            }
             Glide.with(itemView.context)
                 .load(post.imagePath)
                 .placeholder(R.drawable.placeholder_image)
