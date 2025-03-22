@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.navigation.fragment.findNavController
 import com.example.travel.data.CloudinaryModel
 import com.example.travel.data.firebase.FirebaseService
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
@@ -103,7 +104,8 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             // Observe the result from ViewModel
             postViewModel.createPostWithImage(requireContext(), newPost, imageUri!!, { postId ->
                 Toast.makeText(requireContext(), "Post saved successfully!", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.profileFragment)
+                findNavController().navigate(R.id.action_createPostFragment_to_profileFragment)
+
             }, { error ->
                 Toast.makeText(requireContext(), "Failed to save post: $error", Toast.LENGTH_SHORT).show()
             })

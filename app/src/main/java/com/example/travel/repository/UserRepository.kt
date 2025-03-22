@@ -45,6 +45,10 @@ class UserRepository(
     fun getUserByEmail(email: String): LiveData<User?> {
         return userDao.getUserByEmail(email)
     }
+    suspend fun updateUser(user: User) {
+        userDao.updateUser(user)
+    }
+
 }
 
 

@@ -37,4 +37,10 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     fun getUserByEmail(email: String): LiveData<User?> {
         return repository.getUserByEmail(email)
     }
+    fun updateUser(user: User) {
+        viewModelScope.launch {
+            repository.updateUser(user)
+        }
+    }
+
 }

@@ -9,7 +9,11 @@
         android:id="@+id/createPostFragment"
         android:name="com.example.travel.ui.CreatePostFragment"
         android:label="Create Post"
-        tools:layout="@layout/fragment_create_post" />
+        tools:layout="@layout/fragment_create_post">
+    <action
+        android:id="@+id/action_createPostFragment_to_profileFragment"
+        app:destination="@id/profileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.travel.ui.ProfileFragment"

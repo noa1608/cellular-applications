@@ -6,11 +6,14 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +47,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     val firebaseService = FirebaseService()
     val cloudinaryModel = CloudinaryModel()
 
+    private lateinit var pickImageLauncher: ActivityResultLauncher<String>
     private lateinit var profileImage: ImageView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,6 +75,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             PostViewModelFactory(PostRepository(db.postDao(),firebaseService ), cloudinaryModel)
         )[PostViewModel::class.java]
         Log.d("ProfileFragment", "userEmail: $userEmail")
+
+        pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                uploadProfileImage(it)
+            }
+        }
         // Fetch user info from Room (synced with Firestore)
         userViewModel.getUserByEmail(userEmail).observe(viewLifecycleOwner) { user ->
             user?.let {
@@ -124,14 +134,81 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         val etUsername = dialogView.findViewById<EditText>(R.id.et_edit_username)
         val ivProfilePic = dialogView.findViewById<ImageView>(R.id.iv_edit_profile_image)
 
+        val user = FirebaseAuth.getInstance().currentUser
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(user?.uid ?: "")
+
+        userRef.get().addOnSuccessListener { document ->
+            val profilePicUrl = document?.getString("profilePicture")
+            if (profilePicUrl != null) {
+                Glide.with(requireContext()).load(profilePicUrl)
+                    .placeholder(R.drawable.ic_profile)
+                    .circleCrop()
+                    .into(ivProfilePic)
+            }
+        }
+        ivProfilePic.setOnClickListener {
+            pickImageLauncher.launch("image/*")  // Launch the image picker
+        }
+
         AlertDialog.Builder(requireContext())
             .setTitle("Edit Profile")
             .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
                 val newUsername = etUsername.text.toString()
-                // Save updated username logic here
+                val newProfilePicUrl = ivProfilePic.tag as? Uri
+                if (newUsername != null) {
+                    updateUsernameInFirebase(newUsername)
+                }
+                if (newProfilePicUrl != null) {
+                    uploadProfileImage(newProfilePicUrl)
+                }
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+    private fun uploadProfileImage(uri: Uri) {
+        val uniqueName = "profile_image_${System.currentTimeMillis()}"
+        val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri)
+        cloudinaryModel.uploadImage(bitmap, uniqueName, { imageUrl ->
+            // onSuccess callback
+            imageUrl?.let {
+                // Update Firebase with the new profile image URL
+                updateProfilePictureInFirebase(it)
+                syncUserFromFirebase()
+            }
+        }, { errorMessage ->
+            // onError callback
+            Toast.makeText(requireContext(), "Error uploading image: $errorMessage", Toast.LENGTH_SHORT).show()
+        })
+    }
+
+    private fun updateProfilePictureInFirebase(url: String) {
+        val user = FirebaseAuth.getInstance().currentUser
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(user?.uid ?: "")
+
+        userRef.update("profilePicture", url)
+            .addOnSuccessListener {
+                // Sync user data with Room after updating Firebase
+                syncUserFromFirebase()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error updating profile picture: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+    private fun updateUsernameInFirebase(username: String) {
+        val user = FirebaseAuth.getInstance().currentUser
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(user?.uid ?: "")
+
+        userRef.update("username", username)
+            .addOnSuccessListener {
+                syncUserFromFirebase()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error updating username: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+    private fun syncUserFromFirebase() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        userViewModel.syncUser(userId) // Sync Room with Firebase
     }
 }
