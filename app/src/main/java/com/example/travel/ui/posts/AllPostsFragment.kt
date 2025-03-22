@@ -67,11 +67,7 @@ class AllPostsFragment : Fragment(R.layout.fragment_all_posts) {
     }
 
     private fun navigateToSinglePost(postId: String) {
-        val bundle = Bundle().apply {
-            putString("postId", postId)
-        }
-
-        // Use NavController to navigate
-        findNavController().navigate(R.id.action_allPostsFragment_to_singlePostFragment, bundle)
+        val action = AllPostsFragmentDirections.actionAllPostsFragmentToSinglePostFragment(postId)
+        findNavController().navigate(action)
     }
 }

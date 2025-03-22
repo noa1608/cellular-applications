@@ -22,9 +22,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.car.ui.toolbar.MenuItem
 import com.bumptech.glide.Glide
 import com.example.travel.R
 import com.example.travel.data.AppDatabase
@@ -106,7 +106,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                     }
                     val userPosts = allPosts.filter { post -> post.owner == userId }
                     Log.d("ProfileFragment", "User posts: $userPosts")
-                    recyclerView.adapter = ProfilePostAdapter(userPosts)
+                    recyclerView.adapter = ProfilePostAdapter(userPosts, object : ProfilePostAdapter.OnPostClickListener {
+                        override fun onPostClick(postId: String) {
+                            // When a post is clicked, navigate to the SinglePostFragment
+                            val action = ProfileFragmentDirections.actionProfileFragmentToSinglePostFragment(postId)
+                            findNavController().navigate(action)
+                        }
+                    })
                 }
             }
         }
