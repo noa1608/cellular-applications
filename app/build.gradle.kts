@@ -104,7 +104,5 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.glide)
-    implementation("androidx.navigation:navigation-fragment-ktx:${libs.versions.navigation.get()}")
-    implementation("androidx.navigation:navigation-ui-ktx:${libs.versions.navigation.get()}")
-}
 
+}

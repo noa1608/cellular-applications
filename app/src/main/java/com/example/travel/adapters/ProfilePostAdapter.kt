@@ -10,8 +10,15 @@ import com.bumptech.glide.Glide
 import com.example.travel.R
 import com.example.travel.data.Post
 
-class ProfilePostAdapter(private val postList: List<Post>) :
-    RecyclerView.Adapter<ProfilePostAdapter.PostViewHolder>() {
+class ProfilePostAdapter(
+    private val postList: List<Post>,
+    private val onPostClickListener: OnPostClickListener // Add the listener
+) : RecyclerView.Adapter<ProfilePostAdapter.PostViewHolder>() {
+
+    // Define an interface to handle clicks
+    interface OnPostClickListener {
+        fun onPostClick(postId: String)
+    }
 
     inner class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val postTitle: TextView = itemView.findViewById(R.id.tv_post_title)
@@ -30,6 +37,11 @@ class ProfilePostAdapter(private val postList: List<Post>) :
         Glide.with(holder.itemView.context)
             .load(post.imagePath)
             .into(holder.postImage)
+
+        // Set a click listener on the post image
+        holder.postImage.setOnClickListener {
+            onPostClickListener.onPostClick(post.id) // Trigger the listener with the postId
+        }
     }
 
     override fun getItemCount(): Int = postList.size

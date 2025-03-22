@@ -6,32 +6,39 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/logoutButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/teal_700"
-        android:textColor="@android:color/white"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
 
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="8dp"
-        android:src="@drawable/ic_profile"
-        android:background="@drawable/circular_shape"
-        android:scaleType="centerCrop"
-        android:contentDescription="Profile Image"
-        android:padding="2dp"
-        android:elevation="4dp" />
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/circular_shape"
+            android:contentDescription="Profile Image"
+            android:elevation="4dp"
+            android:padding="2dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_profile" />
 
-    <Button
-        android:id="@+id/btn_edit_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/btn_more_options"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="More options"
+            android:padding="8dp"
+            android:src="@drawable/ic_more_vert" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_username"
@@ -59,7 +66,7 @@
         android:layout_weight="1"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        android:paddingBottom="8dp"
+        android:paddingBottom="0dp"
         android:paddingTop="8dp"
         app:spanCount="2" />
 

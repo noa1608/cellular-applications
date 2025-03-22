@@ -71,5 +71,13 @@
         android:id="@+id/profileFragment"
         android:name="com.example.travel.ui.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/actionProfileFragmentToSinglePostFragment"
+            app:destination="@id/singlePostFragment">
+            <argument
+                android:name="postId"
+                app:argType="string" />
+        </action>
+    </fragment>
 </navigation>

@@ -58,8 +58,9 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
                             if (postId != null) {
                                 // Create a new Post with the updated ID
                                 val postWithId = newPost.copy(id = postId)  // Create a new instance with the Firebase-generated ID
-                                postRepository.createPost(postWithId)
-
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    postRepository.insertPost(postWithId)
+                                }
                                 _postInsertResult.postValue(postId)
                                 onSuccess(postId)
                             } else {
