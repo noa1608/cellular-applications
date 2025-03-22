@@ -39,12 +39,16 @@ class UserRepository(
             Log.e("UserRepository", "Failed to save user to Firestore", e)
         }
     }
-    suspend fun getUserById(userId: String): User? {
+    fun getUserById(userId: String): LiveData<User?> {
         return userDao.getUserById(userId)
     }
     fun getUserByEmail(email: String): LiveData<User?> {
         return userDao.getUserByEmail(email)
     }
+    suspend fun updateUser(user: User) {
+        userDao.updateUser(user)
+    }
+
 }
 
 

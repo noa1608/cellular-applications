@@ -13,11 +13,6 @@ fun savePostImageToDirectory(imageUri: Uri, context: Context): String? {
     return saveImageToDirectory(imageUri, context, "post_images", "post")
 }
 
-// For saving profile images
-fun saveProfileImageToDirectory(imageUri: Uri, context: Context): String? {
-    return saveImageToDirectory(imageUri, context, "profile_images", "profile")
-}
-
 // Shared logic
 private fun saveImageToDirectory(imageUri: Uri, context: Context, folderName: String, prefix: String): String? {
     val fileName = "${prefix}_${System.currentTimeMillis()}.jpg"

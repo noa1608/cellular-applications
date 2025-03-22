@@ -106,4 +106,3 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         }
     }
 }
-
