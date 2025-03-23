@@ -1,4 +1,4 @@
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -14,17 +14,6 @@
         android:textSize="16sp"
         android:background="@drawable/rounded_edittext"
         android:hint="Enter a topic (e.g., Italy)" />
-
-    <EditText
-        android:id="@+id/et_number"
-        android:layout_width="match_parent"
-        android:layout_height="68dp"
-        android:padding="12dp"
-        android:layout_marginTop="10dp"
-        android:textSize="16sp"
-        android:background="@drawable/rounded_edittext"
-        android:hint="Number of images (e.g., 3)"
-        android:inputType="number" />
 
     <Button
         android:id="@+id/btn_generate"
@@ -42,4 +31,4 @@
         android:paddingTop="8dp"
         android:layout_marginTop="20dp"
         android:clipToPadding="false"/>
-</ScrollView>
+</LinearLayout>
