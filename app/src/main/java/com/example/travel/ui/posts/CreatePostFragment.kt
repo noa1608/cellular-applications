@@ -57,19 +57,16 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             pickImageLauncher.launch("image/*")
         }
 
-        // Save post when the save button is clicked
         saveButton.setOnClickListener {
             val title = postTitle.text.toString().trim()
             val description = postDescription.text.toString().trim()
             val currentUser = FirebaseAuth.getInstance().currentUser
             val owner = currentUser?.uid ?: "unknown_user"
-            // Validate inputs
             if (title.isEmpty() || description.isEmpty()) {
                 Toast.makeText(requireContext(), "Title and description cannot be empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Check if an image is selected
             if (imageUri == null) {
                 Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -77,13 +74,11 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
             val imagePath = savePostImageToDirectory(imageUri!!, requireContext())
 
-            // If saving the image failed, show an error
             if (imagePath == null) {
                 Toast.makeText(requireContext(), "Failed to save image", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Create a Post object
             val newPost = Post(
                 title = title,
                 content = description,
@@ -91,7 +86,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                 owner = owner
             )
             Log.d("CreatePostFragment", "Saving post: Title: $title, Description: $description, ImagePath: $imagePath")
-            // Save the post using ViewModel
 
 
             postViewModel.createPostWithImage(requireContext(), newPost, imageUri!!, { postId ->

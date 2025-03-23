@@ -16,7 +16,7 @@ class PostAdapter(private val onPostClick: (String) -> Unit) :
     RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     private val postList = mutableListOf<Post>()
-    private val userNameCache = mutableMapOf<String, String>() // Cache user names
+    private val userNameCache = mutableMapOf<String, String>()
 
     fun submitList(posts: List<Post>) {
         postList.clear()
@@ -40,11 +40,9 @@ class PostAdapter(private val onPostClick: (String) -> Unit) :
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         
         private val titleTextView: TextView = itemView.findViewById(R.id.tv_post_title)
-      //  private val contentTextView: TextView = itemView.findViewById(R.id.tv_post_content)
         private val imageView: ImageView = itemView.findViewById(R.id.postImage)
         private val authorTextView: TextView = itemView.findViewById(R.id.tv_post_author)
         init {
-            // Check if views are null to debug the issue
             if (titleTextView == null || imageView == null || authorTextView == null) {
                 Log.e("PostViewHolder", "One or more views are null")
             }
@@ -55,7 +53,6 @@ class PostAdapter(private val onPostClick: (String) -> Unit) :
             if (userNameCache.containsKey(post.owner)) {
                 authorTextView.text = "By: ${userNameCache[post.owner]}"
             } else {
-                // Fetch username from Firestore
                 FirebaseFirestore.getInstance().collection("users")
                     .document(post.owner)
                     .get()

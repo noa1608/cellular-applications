@@ -8,9 +8,12 @@
     <!-- Title EditText -->
     <EditText
         android:id="@+id/et_post_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:padding="12dp"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:background="@drawable/rounded_edittext"
         android:hint="Post Title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,9 +22,12 @@
     <!-- Content EditText -->
     <EditText
         android:id="@+id/et_post_content"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:padding="12dp"
+        android:layout_marginTop="20dp"
+        android:textSize="16sp"
+        android:background="@drawable/rounded_edittext"
         android:hint="Post Content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,6 +39,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_image"
         android:src="@drawable/placeholder_image"
         android:contentDescription="Post Image"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,8 +49,10 @@
     <!-- Button to select image -->
     <Button
         android:id="@+id/btn_select_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="63dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button"
         android:text="Select Image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,8 +61,10 @@
     <!-- Save Button -->
     <Button
         android:id="@+id/btn_save_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="63dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_button"
         android:text="Save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

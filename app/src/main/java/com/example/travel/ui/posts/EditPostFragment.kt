@@ -32,7 +32,6 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
     private lateinit var selectImageButton: Button
     private lateinit var imageView: ImageView
 
-    // Use Safe Args to get the postId
     private val args: EditPostFragmentArgs by navArgs()
     private var postId: String = args.postId
 

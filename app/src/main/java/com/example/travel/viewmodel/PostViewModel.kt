@@ -42,11 +42,9 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
         onError: (String) -> Unit
     ) {
         viewModelScope.launch {
-            // Convert Uri to Bitmap
             val bitmap = uriToBitmap(context, imageUri)
 
             if (bitmap != null) {
-                // Upload image to Cloudinary
                 cloudinaryModel.uploadImage(bitmap, post.title, { imageUrl ->
                     Log.d("Cloudinary", "Image uploaded successfully: $imageUrl")
                     if (imageUrl != null) {

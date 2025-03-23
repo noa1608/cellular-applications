@@ -12,10 +12,9 @@ import com.example.travel.data.Post
 
 class ProfilePostAdapter(
     private val postList: List<Post>,
-    private val onPostClickListener: OnPostClickListener // Add the listener
+    private val onPostClickListener: OnPostClickListener
 ) : RecyclerView.Adapter<ProfilePostAdapter.PostViewHolder>() {
 
-    // Define an interface to handle clicks
     interface OnPostClickListener {
         fun onPostClick(postId: String)
     }
@@ -38,9 +37,8 @@ class ProfilePostAdapter(
             .load(post.imagePath)
             .into(holder.postImage)
 
-        // Set a click listener on the post image
         holder.postImage.setOnClickListener {
-            onPostClickListener.onPostClick(post.id) // Trigger the listener with the postId
+            onPostClickListener.onPostClick(post.id)
         }
     }
 

@@ -61,12 +61,10 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        // Initialize Firebase instances
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         cloudinaryModel = CloudinaryModel()
 
-        // Initialize ViewModel
         val userRepository = UserRepository(
             AppDatabase.getDatabase(this).userDao(),
             firestore
@@ -82,12 +80,10 @@ class RegisterActivity : AppCompatActivity() {
         val registerTextView = findViewById<TextView>(R.id.registerTextView)
 
 
-        // Image picker button
         selectProfileImageButton.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
 
-        // Register button
         registerButton.setOnClickListener {
             val email = emailEditText.text.toString().trim()
             val username = usernameEditText.text.toString().trim()
@@ -103,7 +99,6 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Check if Uri is accessible
             try {
                 contentResolver.openInputStream(imageUri!!)?.close()
             } catch (e: Exception) {
@@ -111,12 +106,10 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Convert Uri to Bitmap
             val bitmap = imageUri!!.toBitmap(contentResolver)
 
             if (bitmap != null) {
                 Log.d("RegisterActivity", "Bitmap converted successfully: Width: ${bitmap.width}, Height: ${bitmap.height}")
-                // Register with Firebase Auth
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -138,13 +131,11 @@ class RegisterActivity : AppCompatActivity() {
                                         userViewModel.createUser(user)
                                         userViewModel.createUserStatus.observe(this) { result ->
                                             result.onSuccess {
-                                                // User created & synced successfully
                                                 Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
                                                 startActivity(Intent(this, LoginActivity::class.java))
                                                 finish()
                                             }
                                             result.onFailure { error ->
-                                                // Handle error
                                                 Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
                                             }
                                         }

@@ -9,12 +9,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Edit"
+        android:layout_marginTop="20dp"
         android:visibility="gone" />
 
     <Button
         android:id="@+id/btn_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="Delete"
         android:visibility="gone" />
 
@@ -23,6 +25,7 @@
         android:id="@+id/tv_post_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="Post Title"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -39,6 +42,7 @@
     <!-- Content of the Post -->
     <TextView
         android:id="@+id/tv_post_content"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Post content goes here."
@@ -48,8 +52,10 @@
     <!-- ImageView to display Post Image -->
     <ImageView
         android:id="@+id/iv_post_image"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:scaleType="centerCrop"
+        android:background="@drawable/rounded_image"
         android:src="@drawable/placeholder_image" />
 </LinearLayout>

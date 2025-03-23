@@ -52,6 +52,13 @@ class MainActivity : AppCompatActivity() {
                         }
                         true
                     }
+                    R.id.aiFragment -> {
+                        if (navController.currentDestination?.id != R.id.aiFragment) {
+                            navController.popBackStack(R.id.aiFragment, false)
+                            navController.navigate(R.id.aiFragment)
+                        }
+                        true
+                    }
                     else -> false
                 }
             }

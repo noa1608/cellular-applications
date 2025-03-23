@@ -40,7 +40,6 @@ class AllPostsFragment : Fragment(R.layout.fragment_all_posts) {
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
 
         Log.d("SinglePostScreen", "Logged-in User ID: $currentUserId")
-        // Set up RecyclerView
         recyclerView = view.findViewById(R.id.recyclerView)
         postAdapter = PostAdapter { postId ->
             navigateToSinglePost(postId)
@@ -61,8 +60,6 @@ class AllPostsFragment : Fragment(R.layout.fragment_all_posts) {
                         .show()
                 }
             }
-                Toast.makeText(requireContext(), "Failed to sync posts from Firebase", Toast.LENGTH_SHORT).show()
-
 
     }
 
