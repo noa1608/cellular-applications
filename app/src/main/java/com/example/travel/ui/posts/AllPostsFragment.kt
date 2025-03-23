@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,8 @@ import com.example.travel.ui.posts.SinglePostFragment
 import com.example.travel.viewmodel.PostViewModel
 import com.example.travel.viewmodel.PostViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AllPostsFragment : Fragment(R.layout.fragment_all_posts) {
 
@@ -45,14 +48,22 @@ class AllPostsFragment : Fragment(R.layout.fragment_all_posts) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = postAdapter
 
-        // Observe LiveData for posts
-        postViewModel.postList.observe(viewLifecycleOwner) { posts ->
-            if (posts.isNotEmpty()) {
-                postAdapter.submitList(posts)
-            } else {
-                Toast.makeText(requireContext(), "No posts available", Toast.LENGTH_SHORT).show()
+        postViewModel.syncAllPosts { success ->
+            if (!success) {
+                Toast.makeText(requireContext(), "Failed to sync posts from Firebase", Toast.LENGTH_SHORT).show()
             }
         }
+        postViewModel.postList.observe(viewLifecycleOwner) { posts ->
+                if (posts.isNotEmpty()) {
+                    postAdapter.submitList(posts)
+                } else {
+                    Toast.makeText(requireContext(), "No posts available", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+                Toast.makeText(requireContext(), "Failed to sync posts from Firebase", Toast.LENGTH_SHORT).show()
+
+
     }
 
     private fun navigateToSinglePost(postId: String) {

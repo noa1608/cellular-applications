@@ -68,7 +68,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         profileImage = view.findViewById(R.id.profile_image)
 
         recyclerView.layoutManager = layoutManager
-
         userViewModel = ViewModelProvider(
             this,
             UserViewModelFactory(UserRepository(db.userDao(), FirebaseFirestore.getInstance()))
@@ -85,7 +84,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 uploadProfileImage(it)
             }
         }
-        // Fetch user info from Room (synced with Firestore)
+        userViewModel.syncUser(userId)
+
         userViewModel.getUserById(userId).observe(viewLifecycleOwner) { user ->
             user?.let {
                 tvUsername.text = it.username

@@ -14,6 +14,18 @@ import kotlinx.coroutines.launch
 
 class PostRepository(private val postDao: PostDao,private val firebaseService: FirebaseService) {
 
+    fun syncAllPostsFromFirebase(onComplete: (Boolean) -> Unit) {
+        firebaseService.fetchAllPosts { firebasePosts ->
+            if (firebasePosts != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    postDao.insertPosts(firebasePosts)
+                    onComplete(true)
+                }
+            } else {
+                onComplete(false)
+            }
+        }
+    }
 
     fun savePostToFirebase(post: Post, onComplete: (String?) -> Unit) {
         firebaseService.savePost(post) { postId ->

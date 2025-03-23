@@ -8,6 +8,6 @@ data class Post(
     @PrimaryKey var id: String = "",
     val title: String = "",
     val content: String ="",
-    val imagePath: String,
-    val owner: String
+    val imagePath: String="",
+    val owner: String=""
 )

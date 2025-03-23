@@ -1,46 +1,74 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <!-- EditText for the Post Title -->
-    <EditText
-        android:id="@+id/et_post_title"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:hint="Post Title"
-        android:inputType="text" />
-
-    <!-- EditText for the Post Description -->
-    <EditText
-        android:id="@+id/et_post_description"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:hint="Post Description"
-        android:inputType="textMultiLine" />
-
-    <!-- ImageView to display the selected image -->
-    <ImageView
-        android:id="@+id/iv_post_image"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@android:drawable/ic_menu_gallery"
-        android:contentDescription="Selected Image"
-        android:scaleType="centerCrop" />
-
-    <!-- Button to allow the user to choose an image -->
-    <Button
-        android:id="@+id/btn_select_image"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Select Image" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
-    <!-- Button to save the post -->
-    <Button
-        android:id="@+id/btn_save_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save Post" />
+        <!-- Post Title -->
+        <EditText
+            android:id="@+id/et_post_title"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Post Title"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:inputType="text" />
 
-</LinearLayout>
+        <!-- Post Description -->
+        <EditText
+            android:id="@+id/et_post_description"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:hint="Post Description"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:layout_marginTop="12dp"
+            android:textSize="16sp"
+            android:inputType="textMultiLine" />
+
+        <!-- Image Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_container"
+            android:padding="4dp">
+
+            <ImageView
+                android:id="@+id/iv_post_image"
+                android:layout_width="match_parent"
+                android:layout_height="217dp"
+                android:background="@drawable/rounded_image"
+                android:contentDescription="Selected Image"
+
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery" />
+        </LinearLayout>
+
+        <!-- Buttons -->
+        <Button
+            android:id="@+id/btn_select_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rounded_button"
+            android:text="Select Image"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btn_save_post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rounded_button"
+            android:text="Save Post"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</ScrollView>

@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import okhttp3.internal.userAgent
 
 class FirebaseService {
@@ -112,6 +113,27 @@ class FirebaseService {
             true // Return success
         } catch (e: Exception) {
             false // Return failure
+        }
+    }
+    fun fetchAllPosts(onComplete: (List<Post>?) -> Unit) {
+        FirebaseFirestore.getInstance().collection("posts")
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val postList = querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(Post::class.java)?.copy(id = document.id)
+                }
+                onComplete(postList)
+            }
+            .addOnFailureListener { e ->
+                onComplete(null)
+            }
+    }
+    suspend fun getUserFromFirestore(userId: String): User? {
+        return try {
+            val snapshot = db.collection("users").document(userId).get().await()
+            snapshot.toObject(User::class.java)
+        } catch (e: Exception) {
+            null
         }
     }
 }

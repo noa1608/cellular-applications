@@ -1,5 +1,6 @@
 package com.example.travel.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +26,7 @@ class PostAdapter(private val onPostClick: (String) -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.post_fragment, parent, false)
+            .inflate(R.layout.item_all_posts, parent, false)
         return PostViewHolder(view)
     }
 
@@ -37,14 +38,20 @@ class PostAdapter(private val onPostClick: (String) -> Unit) :
     override fun getItemCount(): Int = postList.size
 
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        
         private val titleTextView: TextView = itemView.findViewById(R.id.tv_post_title)
-        private val contentTextView: TextView = itemView.findViewById(R.id.tv_post_content)
-        private val imageView: ImageView = itemView.findViewById(R.id.iv_post_image)
+      //  private val contentTextView: TextView = itemView.findViewById(R.id.tv_post_content)
+        private val imageView: ImageView = itemView.findViewById(R.id.postImage)
         private val authorTextView: TextView = itemView.findViewById(R.id.tv_post_author)
-
+        init {
+            // Check if views are null to debug the issue
+            if (titleTextView == null || imageView == null || authorTextView == null) {
+                Log.e("PostViewHolder", "One or more views are null")
+            }
+        }
         fun bind(post: Post, onPostClick: (String) -> Unit, userNameCache: MutableMap<String, String>) {
             titleTextView.text = post.title
-            contentTextView.text = post.content
+           // contentTextView.text = post.content
             if (userNameCache.containsKey(post.owner)) {
                 authorTextView.text = "By: ${userNameCache[post.owner]}"
             } else {

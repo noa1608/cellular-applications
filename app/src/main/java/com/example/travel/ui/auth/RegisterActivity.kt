@@ -79,7 +79,7 @@ class RegisterActivity : AppCompatActivity() {
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
         val registerButton = findViewById<Button>(R.id.registerButton)
         val selectProfileImageButton = findViewById<Button>(R.id.selectProfileImageButton)
-        val loginTextView = findViewById<TextView>(R.id.registerTextView)
+        val registerTextView = findViewById<TextView>(R.id.registerTextView)
 
 
         // Image picker button
@@ -166,8 +166,8 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
             }
         }
-        loginTextView.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+        registerTextView.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
     }

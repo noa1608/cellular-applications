@@ -118,5 +118,10 @@ class PostViewModel(private val postRepository: PostRepository, private val clou
             _post.postValue(result)
         }
     }
-
+    fun syncAllPosts(onComplete: (Boolean) -> Unit) {
+        postRepository.syncAllPostsFromFirebase { success ->
+            onComplete(success)
+        }
     }
+
+}
