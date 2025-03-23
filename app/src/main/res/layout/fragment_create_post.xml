@@ -9,7 +9,6 @@
         android:padding="16dp"
         android:gravity="center_horizontal">
 
-        <!-- Post Title -->
         <EditText
             android:id="@+id/et_post_title"
             android:layout_width="match_parent"
@@ -21,7 +20,6 @@
             android:textSize="16sp"
             android:inputType="text" />
 
-        <!-- Post Description -->
         <EditText
             android:id="@+id/et_post_description"
             android:layout_width="match_parent"
@@ -33,7 +31,6 @@
             android:textSize="16sp"
             android:inputType="textMultiLine" />
 
-        <!-- Image Container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -52,7 +49,6 @@
                 android:src="@android:drawable/ic_menu_gallery" />
         </LinearLayout>
 
-        <!-- Buttons -->
         <Button
             android:id="@+id/btn_select_image"
             android:layout_width="match_parent"

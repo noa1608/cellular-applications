@@ -87,16 +87,14 @@ class FirebaseService {
 
             FirebaseFirestore.getInstance().collection("posts")
                 .document(post.id)
-                .set(postMap) // Update the post
+                .set(postMap)
                 .addOnSuccessListener {
-                    // Post updated successfully in Firebase
                 }
                 .addOnFailureListener {
-                    // Handle failure
                 }
-            true // Return success
+            true
         } catch (e: Exception) {
-            false // Return failure
+            false
         }
     }
     fun deletePost(postId: String): Boolean {
@@ -105,14 +103,12 @@ class FirebaseService {
                 .document(postId)
                 .delete()
                 .addOnSuccessListener {
-                    // Post deleted successfully in Firebase
                 }
                 .addOnFailureListener {
-                    // Handle failure
                 }
-            true // Return success
+            true
         } catch (e: Exception) {
-            false // Return failure
+            false
         }
     }
     fun fetchAllPosts(onComplete: (List<Post>?) -> Unit) {

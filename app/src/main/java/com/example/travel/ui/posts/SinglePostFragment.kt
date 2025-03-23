@@ -44,11 +44,9 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
         val postViewModelFactory = PostViewModelFactory(postRepository, cloudinaryModel)
         postViewModel = ViewModelProvider(this, postViewModelFactory).get(PostViewModel::class.java)
 
-        // Get the postId from arguments
         val args = SinglePostFragmentArgs.fromBundle(requireArguments())
         val postId = args.postId
 
-        // Set up UI elements
         postTitleTextView = view.findViewById(R.id.tv_post_title)
         postContentTextView = view.findViewById(R.id.tv_post_content)
         postImageView = view.findViewById(R.id.iv_post_image)
@@ -58,15 +56,12 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
 
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
         Log.d("SinglePost","Current User is: $currentUserId")
-        // Fetch the post by ID
         postViewModel.getPostById(postId)
         Log.d("SinglePost", "Post id is $postId")
-        // Observe the post LiveData
         postViewModel.post.observe(viewLifecycleOwner) { post ->
             Log.d("SinglePostFragment", "Fetched post: $post")
 
             if (post != null) {
-                // Display the post details
                 postTitleTextView.text = post.title
                 postContentTextView.text = post.content
                 firebaseService.getUserById(post.owner) { user ->
@@ -76,13 +71,12 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
                         postAuthorTextView.text = "By: Unknown User"
                     }
                 }
-                Glide.with(requireContext())  // Use Glide to load the image
+                Glide.with(requireContext())
                     .load(post.imagePath)
                     .placeholder(R.drawable.placeholder_image)
                     .error(R.drawable.error_image)
                     .into(postImageView)
 
-                // Show edit/delete buttons only if the current user is the post owner
                 if (currentUserId.isNotEmpty() && currentUserId == post.owner) {
                     editButton.visibility = View.VISIBLE
                     deleteButton.visibility = View.VISIBLE
@@ -100,7 +94,6 @@ class SinglePostFragment : Fragment(R.layout.post_fragment) {
                     deletePost(postId)
                 }
             } else {
-                // Handle the case where the post is not found
                 Toast.makeText(requireContext(), "Post not found", Toast.LENGTH_SHORT).show()
             }
         }

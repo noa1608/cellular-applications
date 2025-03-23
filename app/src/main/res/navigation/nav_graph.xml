@@ -80,4 +80,9 @@
                 app:argType="string" />
         </action>
     </fragment>
+    <fragment
+        android:id="@+id/aiFragment"
+        android:name="com.example.travel.ui.ImageGeneratorFragment"
+        android:label="AI generator"
+        tools:layout="@layout/fragment_image_generator"  />
 </navigation>
