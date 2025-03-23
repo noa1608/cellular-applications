@@ -15,5 +15,5 @@
     <item
         android:id="@+id/aiFragment"
         android:icon="@drawable/ic_more_vert"
-        android:title="Profile" />
+        android:title="OpenAI" />
 </menu>

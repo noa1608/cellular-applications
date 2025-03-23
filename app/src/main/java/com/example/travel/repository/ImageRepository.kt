@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 class ImageRepository {
     suspend fun getImages(prompt: String, n: Int): List<String> = withContext(Dispatchers.IO) {
-        val apiKey = ""
+        val apiKey = "Bearer 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"
         val url = "https://api.openai.com/v1/images/generations"
 
         val client = OkHttpClient.Builder()

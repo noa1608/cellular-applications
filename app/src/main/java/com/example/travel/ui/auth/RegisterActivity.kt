@@ -158,7 +158,7 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
         registerTextView.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
     }

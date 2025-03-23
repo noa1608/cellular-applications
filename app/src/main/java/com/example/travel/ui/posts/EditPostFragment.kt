@@ -33,8 +33,6 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
     private lateinit var imageView: ImageView
 
     private val args: EditPostFragmentArgs by navArgs()
-    private var postId: String = args.postId
-
     private var originalImagePath: String? = null
     private var originalOwner: String? = null
 
@@ -49,6 +47,7 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val postId: String = args.postId
         val firebaseService = FirebaseService()
         val cloudinaryModel = CloudinaryModel()
         val postDao = AppDatabase.getDatabase(requireContext()).postDao()
@@ -62,7 +61,6 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
         selectImageButton = view.findViewById(R.id.btn_select_image)
         imageView = view.findViewById(R.id.iv_post_image)
 
-        // Load the existing post details
         postViewModel.getPostById(postId)
         postViewModel.post.observe(viewLifecycleOwner) { post ->
             post?.let {
@@ -77,7 +75,6 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
             }
         }
 
-        // Open gallery to select a new image
         selectImageButton.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -95,24 +92,20 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
                 return@setOnClickListener
             }
 
-            // Use the existing image path if no new image is selected
             val finalImagePath = imageUri?.toString() ?: originalImagePath
 
-            // Use the original owner if it hasn't changed
             val finalOwner = originalOwner ?: "" // If owner is not null, retain original owner
 
-            // Create a Post object with updated data
             val updatedPost = Post(
-                id = postId,  // Use existing post ID
+                id = postId,
                 title = updatedTitle,
                 content = updatedContent,
                 imagePath = finalImagePath ?: "",
-                owner = finalOwner // Retain the original owner
+                owner = finalOwner
             )
 
             postViewModel.updatePost(updatedPost)
 
-            // Observe the result of the update operation
             postViewModel.postUpdateResult.observe(viewLifecycleOwner) { isSuccess ->
                 if (isSuccess) {
                     Toast.makeText(

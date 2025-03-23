@@ -17,6 +17,7 @@
         android:paddingTop="8dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
+        android:scaleType="centerCrop"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2" />
 </LinearLayout>

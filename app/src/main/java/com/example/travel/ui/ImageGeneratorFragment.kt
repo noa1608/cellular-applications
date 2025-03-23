@@ -30,7 +30,6 @@ class ImageGeneratorFragment : Fragment(R.layout.fragment_image_generator) {
         })[ImageGeneratorViewModel::class.java]
 
         val etQuery = view.findViewById<EditText>(R.id.et_query)
-        val etNumber = view.findViewById<EditText>(R.id.et_number)
         val btnGenerate = view.findViewById<Button>(R.id.btn_generate)
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_images)
 
@@ -40,9 +39,7 @@ class ImageGeneratorFragment : Fragment(R.layout.fragment_image_generator) {
 
         btnGenerate.setOnClickListener {
             val prompt = etQuery.text.toString()
-            val n = etNumber.text.toString().toIntOrNull() ?: 1
-            println("Generating images for prompt: $prompt with count: $n")
-            viewModel.generateImages(prompt, n)
+            viewModel.generateImages(prompt, 2)
         }
 
         viewModel.images.observe(viewLifecycleOwner) { images ->
